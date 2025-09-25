@@ -4,7 +4,7 @@
 
 無印の AviUtl と AviUtl ExEdit2 の両方に対応しています．
 
-[ダウンロードはこちら．](https://github.com/sigma-axis/aviutl2_script_PageRoll_S/releases) [紹介動画](https://www.nicovideo.jp/watch/sm45441228)
+[ダウンロードはこちら．](https://github.com/sigma-axis/aviutl2_script_PageRoll_S/releases) [紹介動画．](https://www.nicovideo.jp/watch/sm45441228)
 
 https://github.com/user-attachments/assets/ee82a50a-59bc-4256-9163-d843ca322a18
 
