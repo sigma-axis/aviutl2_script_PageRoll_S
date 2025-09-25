@@ -1,0 +1,60 @@
+--[[
+MIT License
+Copyright (c) 2025 sigma-axis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+https://mit-license.org/
+]]
+
+--
+-- VERSION: v1.00
+--
+
+--track0:距離,0,4000,0,0.01
+--track1:角度,-720,720,-90,0.01
+--track2:太さ,8,4000,80,0.01
+--track3:陰影,0,100,50,0.01
+--check0:領域外も描画,1
+--dialog:視点,_1={0,0};視野角,_2=70;PI,_0=nil;
+local obj, math, tonumber, type = obj, math, tonumber, type;
+
+-- set anchors.
+obj.setanchor("_1", 1, "line");
+
+-- take parameters.
+local distance, angle, width, shadow, unbound, view, fov = obj.track0, obj.track1, obj.track2, obj.track3, obj.check0, _1, _2;
+_1 = nil; _2 = nil;
+if type(_0) == "table" then
+	local c0, t0, t1, t2, t3 = _0[0], _0[1], _0[2], _0[3], _0[4]; _0 = nil;
+	if type(c0) == "boolean" then unbound = c0;
+	elseif type(c0) == "number" then unbound = c0 ~= 0 end
+	distance = tonumber(t0) or distance;
+	angle = tonumber(t1) or angle;
+	width = tonumber(t2) or width;
+	shadow = tonumber(t3) or shadow;
+end
+local X, Y if type(view) == "table" then X, Y = view[1], view[2] end
+X = tonumber(X) or 0;
+Y = tonumber(Y) or 0;
+fov = tonumber(fov) or 70;
+shadow = tonumber(shadow) or 50;
+
+-- apply effect.
+require"PageRoll_S".apply_effect(distance, math.pi / 180 * angle, width, X, Y, math.pi / 180 * fov, shadow / 100, unbound);

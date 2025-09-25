@@ -1,0 +1,116 @@
+--[[
+MIT License
+Copyright (c) 2025 sigma-axis
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+https://mit-license.org/
+]]
+
+--information:PageRoll_S(シーンチェンジ) v1.00 (for beta12) by σ軸
+--label:シーンチェンジ
+--track@angle:角度,-720,720,-90,0.01
+--track@width:太さ,2,150,20,0.01
+--track0:視点X,-4000,4000,0,0.01
+--track1:視点Y,-4000,4000,0,0.01
+--track@fov:視野角,0,120,70,0.01
+--track@shadow:陰影,0,100,50,0.01
+--check@reverse:反転,0
+--value@PI:PI,{}
+--[[pixelshader@combine:
+Texture2D img_prev : register(t0);
+Texture2D img_next : register(t1);
+cbuffer constant0 : register(b0) {
+	float2 dir, view_center;
+	float shadow;
+};
+float4 blend(float4 col_base, float4 col_over)
+{
+	return (1 - col_over.a) * col_base + col_over;
+}
+float4 combine(float4 pos : SV_Position) : SV_Target
+{
+	const float l = dot(dir, pos.xy - view_center);
+	float4 col = saturate(0.5 - 2 * l) * img_next.Load(int3(pos.xy, 0));
+	col.rgb *= 1 - shadow * saturate(1 + (2.0 / 3) * l);
+	return blend(col, img_prev.Load(int3(pos.xy, 0)));
+}
+]]
+local obj, math, tonumber, type = obj, math, tonumber, type;
+
+-- set anchors.
+obj.setanchor("track", 0, "line");
+
+-- take parameters.
+--[==[
+	PI = {
+		angle:		number?,
+		width:		number?,
+		X:			number?,
+		Y:			number?,
+		fov:		number?,
+		shadow:		number?,
+		reverse:	boolean|number|nil,
+		phase:		number?,
+	}
+]==]
+local function as_bool(t, v)
+	if type(t) == "boolean" then return t;
+	elseif type(t) == "number" then return t ~= 0;
+	else return v end
+end
+angle = tonumber(PI.angle) or angle;
+width = tonumber(PI.width) or width;
+local X = tonumber(PI.X) or obj.track0;
+local Y = tonumber(PI.Y) or obj.track1;
+fov = tonumber(PI.fov) or fov;
+shadow = tonumber(PI.shadow) or shadow;
+reverse = as_bool(PI.reverse, reverse ~= 0);
+local phase = tonumber(PI.phase) or obj.getvalue("scenechange");
+
+-- normalize parameters.
+angle = math.pi / 180 * angle;
+width = math.max(width / 100 * (obj.screen_w ^ 2 + obj.screen_h ^ 2) ^ 0.5, 8);
+fov = math.min(math.max(math.pi / 180 * fov, 0), (2 / 3) * math.pi);
+shadow = math.min(math.max(shadow / 100, 0), 1);
+phase = math.min(math.max(phase, 0), 1);
+
+-- further calculations.
+local c, s = math.cos(angle), math.sin(angle);
+if reverse then
+	phase = 1 - phase;
+	obj.copybuffer("tempbuffer", "object");
+	obj.copybuffer("object", "framebuffer");
+	obj.copybuffer("framebuffer", "tempbuffer");
+end
+local distance = phase * (width / 2 + math.abs(s) * obj.screen_w + math.abs(c) * obj.screen_h);
+
+-- apply rolling deformation.
+obj.effect("PageRoll_S", "PI",
+	("distance=%f,angle=%f,width=%f,X=%f,Y=%f,fov=%f,shadow=%f,unbound=false"):format(
+		distance, 180 / math.pi * angle, width, X, Y, 180 / math.pi * fov, 100 * shadow));
+
+-- shade and combine.
+obj.pixelshader("combine", "framebuffer", { "object", "framebuffer" },
+{
+	2 * s / width, -2 * c / width;
+	(s > 0 and 0 or obj.screen_w) + s * distance,
+	(c > 0 and obj.screen_h or 0) - c * distance;
+	shadow,
+});
