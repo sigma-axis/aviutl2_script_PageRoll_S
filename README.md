@@ -6,7 +6,9 @@
 
 [ダウンロードはこちら．](https://github.com/sigma-axis/aviutl2_script_PageRoll_S/releases) \[紹介動画準備中...\]
 
-TODO: 使用例
+https://github.com/user-attachments/assets/ee82a50a-59bc-4256-9163-d843ca322a18
+
+https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
 
 - <details>
   <summary>元画像出典 (クリックで表示):</summary>
@@ -71,7 +73,7 @@ TODO: 使用例
 
 `PageRoll_S` という名前のフィルタ効果 (アニメーション効果)です．画像単体にページを丸めたような変形を適用します．
 
-TODO: demo.
+https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
 
 - AviUtl2 の場合，初期状態だと「オブジェクトを追加」メニューの「変形」に「PageRoll_S」が追加されています．
 
@@ -79,7 +81,7 @@ TODO: demo.
 
 AviUtl (無印) だと `PageRoll_S` という名前，AviUtl2 だと `PageRoll_S(シーンチェンジ)` の名前のシーンチェンジ効果です．シーン全体をページを丸めるように動かして次のシーンに移行します．
 
-TODO: demo.
+https://github.com/user-attachments/assets/ee82a50a-59bc-4256-9163-d843ca322a18
 
 - AviUtl2 の場合，初期状態だと「オブジェクトを追加」メニューの「シーンチェンジ」に「PageRoll_S(シーンチェンジ)」が追加されています．
 - AviUtl (無印) と AviUtl2 で名前が違うのは，AviUtl2 だとスクリプトの分類がフィルタ効果とシーンチェンジで違っていても，名前が重複できない仕様のためです．
@@ -92,7 +94,11 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 ### 共通の設定項目
 
-TODO: images of gui
+<img width="720" height="222" alt="AviUtl1のアニメーション効果版のGUIその1" src="https://github.com/user-attachments/assets/df7e0552-840d-4264-a5a7-b05224404369" />
+
+<img width="298" height="262" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/5dccccd2-6cd4-4d8f-90ff-3e3b60827278" />
+
+<img width="500" height="350" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/39ad6324-e4ae-4d9f-ac0c-44e928bbc987" />
 
 ####  `角度`
 
@@ -150,7 +156,11 @@ TODO: images of gui
 
 ### フィルタ効果 (アニメーション効果) の設定項目
 
-TODO: image of gui.
+<img width="720" height="222" alt="AviUtl1のアニメーション効果版のGUIその1" src="https://github.com/user-attachments/assets/df7e0552-840d-4264-a5a7-b05224404369" />
+
+<img width="298" height="262" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/5dccccd2-6cd4-4d8f-90ff-3e3b60827278" />
+
+<img width="500" height="350" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/39ad6324-e4ae-4d9f-ac0c-44e928bbc987" />
 
 ####  `距離`
 
@@ -166,7 +176,11 @@ TODO: image of gui.
 
 ### シーンチェンジの設定項目
 
-TODO: image of gui.
+<img width="720" height="180" alt="AviUtl1のシーンチェンジのGUIその1" src="https://github.com/user-attachments/assets/87d164cd-9a0b-49c8-bb3d-915cb05d4b98" />
+
+<img width="298" height="294" alt="AviUtl1のシーンチェンジのGUIその2" src="https://github.com/user-attachments/assets/8c408231-deaa-410c-9819-206c5d3ba39c" />
+
+<img width="500" height="316" alt="AviUtl2のシーンチェンジのGUI" src="https://github.com/user-attachments/assets/5e7aae49-5588-4f32-a9ed-1a700d148fe9" />
 
 ####  `反転`
 
