@@ -75,7 +75,7 @@ https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
 
 https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
 
-- AviUtl2 の場合，初期状態だと「オブジェクトを追加」メニューの「変形」に「PageRoll_S」が追加されています．
+- AviUtl2 の場合，初期状態だと「フィルタ効果を追加」メニューの「変形」に「PageRoll_S」が追加されています．
 
 ### シーンチェンジ
 
