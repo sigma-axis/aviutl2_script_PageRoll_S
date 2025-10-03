@@ -96,9 +96,9 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 <img width="720" height="222" alt="AviUtl1のアニメーション効果版のGUIその1" src="https://github.com/user-attachments/assets/df7e0552-840d-4264-a5a7-b05224404369" />
 
-<img width="298" height="262" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/5dccccd2-6cd4-4d8f-90ff-3e3b60827278" />
+<img width="298" height="326" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/fa94d167-1027-47d1-9e34-18939c6951e6" />
 
-<img width="500" height="350" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/39ad6324-e4ae-4d9f-ac0c-44e928bbc987" />
+<img width="500" height="422" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/449595e2-ee50-460e-908a-0dd974d4a89b" />
 
 ####  `角度`
 
@@ -201,9 +201,9 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 <img width="720" height="222" alt="AviUtl1のアニメーション効果版のGUIその1" src="https://github.com/user-attachments/assets/df7e0552-840d-4264-a5a7-b05224404369" />
 
-<img width="298" height="262" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/5dccccd2-6cd4-4d8f-90ff-3e3b60827278" />
+<img width="298" height="326" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/fa94d167-1027-47d1-9e34-18939c6951e6" />
 
-<img width="500" height="350" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/39ad6324-e4ae-4d9f-ac0c-44e928bbc987" />
+<img width="500" height="422" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/449595e2-ee50-460e-908a-0dd974d4a89b" />
 
 ####  `距離`
 
@@ -219,11 +219,11 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 ### シーンチェンジの設定項目
 
-<img width="720" height="180" alt="AviUtl1のシーンチェンジのGUIその1" src="https://github.com/user-attachments/assets/87d164cd-9a0b-49c8-bb3d-915cb05d4b98" />
+<img width="720" height="180" alt="AviUtl1のシーンチェンジのGUIその1" src="https://github.com/user-attachments/assets/0a13684b-10b0-45aa-bd25-62987813ba9b" />
 
-<img width="298" height="294" alt="AviUtl1のシーンチェンジのGUIその2" src="https://github.com/user-attachments/assets/8c408231-deaa-410c-9819-206c5d3ba39c" />
+<img width="298" height="388" alt="AviUtl1のシーンチェンジのGUIその2" src="https://github.com/user-attachments/assets/4ead1abe-148f-44e2-99bf-4f0b99d9785a" />
 
-<img width="500" height="316" alt="AviUtl2のシーンチェンジのGUI" src="https://github.com/user-attachments/assets/5e7aae49-5588-4f32-a9ed-1a700d148fe9" />
+<img width="500" height="422" alt="AviUtl2のシーンチェンジのGUI" src="https://github.com/user-attachments/assets/54dd6581-ac54-476a-8b18-8d29f2db51da" />
 
 ####  `裏地`
 
