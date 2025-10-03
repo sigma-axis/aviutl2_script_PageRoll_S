@@ -24,7 +24,7 @@ https://mit-license.org/
 ]]
 
 --
--- VERSION: v1.00
+-- VERSION: v1.10
 --
 
 --track0:距離,0,4000,0,0.01
@@ -32,15 +32,15 @@ https://mit-license.org/
 --track2:太さ,8,4000,80,0.01
 --track3:陰影,0,100,50,0.01
 --check0:領域外も描画,1
---dialog:視点,_1={0,0};視野角,_2=70;PI,_0=nil;
+--dialog:視点,_1={0,0};視野角,_2=70;裏地画像,_3=[[]];裏地向き(0~3),_4=0;PI,_0=nil;
 local obj, math, tonumber, type = obj, math, tonumber, type;
 
 -- set anchors.
 obj.setanchor("_1", 1, "line");
 
 -- take parameters.
-local distance, angle, width, shadow, unbound, view, fov = obj.track0, obj.track1, obj.track2, obj.track3, obj.check0, _1, _2;
-_1 = nil; _2 = nil;
+local distance, angle, width, shadow, unbound, view, fov, file_image, back_orient = obj.track0, obj.track1, obj.track2, obj.track3, obj.check0, _1, _2, _3, _4;
+_1 = nil; _2 = nil; _3 = nil; _4 = nil;
 if type(_0) == "table" then
 	local c0, t0, t1, t2, t3 = _0[0], _0[1], _0[2], _0[3], _0[4]; _0 = nil;
 	if type(c0) == "boolean" then unbound = c0;
@@ -54,7 +54,8 @@ local X, Y if type(view) == "table" then X, Y = view[1], view[2] end
 X = tonumber(X) or 0;
 Y = tonumber(Y) or 0;
 fov = tonumber(fov) or 70;
-shadow = tonumber(shadow) or 50;
+file_image = type(file_image) == "string" and file_image or nil;
+back_orient = math.floor(0.5 + (tonumber(back_orient) or 0));
 
 -- apply effect.
-require"PageRoll_S".apply_effect(distance, math.pi / 180 * angle, width, X, Y, math.pi / 180 * fov, shadow / 100, unbound);
+require"PageRoll_S".apply_effect(distance, math.pi / 180 * angle, width, X, Y, math.pi / 180 * fov, shadow / 100, unbound, 1, file_image, back_orient);

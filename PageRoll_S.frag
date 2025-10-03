@@ -24,7 +24,7 @@ https://mit-license.org/
 */
 
 //
-// VERSION: v1.00
+// VERSION: v1.10
 //
 
 ////////////////////////////////
@@ -34,11 +34,17 @@ in vec2 TexCoord;
 
 layout(location = 0) out vec4 FragColor;
 
-uniform sampler2D texture0;
+layout(binding = 0) uniform sampler2D texture0;
+layout(binding = 1) uniform sampler2D texture1;
 uniform ivec2 size;
+uniform ivec2 offset;
 uniform vec2 dir;
 uniform vec2 tilt_z;
 uniform vec2 view_center;
+uniform ivec2 img_sz;
+uniform ivec2 back_sz;
+uniform vec2 back_x;
+uniform vec2 back_y;
 uniform float radius;
 uniform float hf_width;
 uniform float tan_hf_roll;
@@ -55,25 +61,27 @@ vec4 blend(vec4 col_base, vec4 col_over)
 	return a > 0 ? vec4((a_base * col_base.rgb + col_over.a * col_over.rgb) / a, a) : vec4(0.0);
 }
 
-vec4 pick(vec2 pos)
+vec4 pick(vec2 pos, sampler2D tex, ivec2 sz)
 {
-	vec4 col = texture(texture0, pos / size);
-	const vec2 t = clamp(min(pos, size - pos) + 0.5, 0, 1);
+	vec4 col = texture(tex, pos / sz);
+	const vec2 t = clamp(min(pos, sz - pos) + 0.5, 0, 1);
 	col.a *= t.x * t.y;
 	return col;
 }
-
-bvec2 sel(bvec2 c, bvec2 t, bvec2 f)
+vec4 pick_back(vec2 pos)
 {
-	// vectorized c ? t : f.
-	return (c && t) || (not(c) && f);
+	return pick(vec2(
+		dot(back_x, vec2(pos.x, 1)),
+		dot(back_y, vec2(pos.y, 1))),
+	texture1, back_sz);
 }
 
 void main()
 {
-	const vec2 pos = TexCoord * size;
+	const vec2 pos = TexCoord * size - offset;
 	const float l = dot(dir, pos - view_center);
-	vec4 col = l >= 0 ? pick(pos) : vec4(0.0);
+	vec4 col = l >= 0 ? pick(pos, texture0, img_sz) : vec4(0.0);
+
 	if (-hf_width <= l && l <= hf_width) {
 		const float pi = 3.141592653589793;
 		const float r = abs(l / radius), s = r * tan_hf_roll,
@@ -90,13 +98,13 @@ void main()
 			roll = -2 * pi * radius * dir;
 		vec4 col_b = vec4(0.0), col_f = vec4(0.0);
 		for (vec2 pt = pt0 - a1 * radius * dir - z1 * tilt_z0;
-			all(sel(lessThan(roll, vec2(0.0)), greaterThanEqual(pt, vec2(-0.5)), lessThan(pt, size + 0.5)));
+			all(mix(lessThan(pt, img_sz + 0.5), greaterThanEqual(pt, vec2(-0.5)), lessThan(roll, vec2(0.0))));
 			pt += roll)
-			col_b = blend(col_b, thicken(pick(pt), density));
+			col_b = blend(col_b, thicken(pick(pt, texture0, img_sz), density));
 		for (vec2 pt = pt0 - a2 * radius * dir - z2 * tilt_z0;
-			all(sel(lessThan(roll, vec2(0.0)), greaterThanEqual(pt, vec2(-0.5)), lessThan(pt, size + 0.5)));
+			all(mix(lessThan(pt, img_sz + 0.5), greaterThanEqual(pt, vec2(-0.5)), lessThan(roll, vec2(0.0))));
 			pt += roll)
-			col_f = blend(thicken(pick(pt), density), col_f);
+			col_f = blend(thicken(pick_back(pt), density), col_f);
 
 		col_b.rgb *= sh;
 		col_b = blend(col_b, col_f);

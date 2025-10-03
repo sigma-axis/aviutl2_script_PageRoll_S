@@ -44,7 +44,7 @@ https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
 
   http://spring-fragrance.mints.ne.jp/aviutl
 
-  - `beta12` で動作確認済み．
+  - `beta13` で動作確認済み．
 
 ## 導入方法
 
@@ -154,6 +154,49 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 強さを %単位で指定，最小値は `0.00`, 最大値は `100.00`, 初期値は `50.00`
 
+####  `裏地画像`
+
+丸めたページの裏側に画像ファイルを設定することができます．未指定の場合は丸めた画像をそのまま使用します．
+
+- AviUtl (無印) の場合
+
+  `[[C:\images\back.png]]` の形式で画像ファイルのパスを指定します．
+
+  - パスは `[[...]]` で囲ってください．囲っていない場合，[一部の文字](https://sites.google.com/site/fudist/Home/grep/sjis-damemoji-jp)でパスの解釈が正しくできません．
+  - 冒頭末尾前後にダブルクォート `"` があっても無視されます (`[["C:\images\back.png"]]` でも OK).
+
+  - 空の文字列 (`[[]]`) を指定すると，未指定扱いになります．
+
+
+- AviUtl ExEdit2 の場合
+
+  ファイル選択ダイアログか，ファイルのドラッグ & ドロップで画像ファイルを選んでください．
+
+初期値は未指定．
+
+####  `裏地向き`
+
+丸めたページの裏側の，画像の向きを上下左右反転できます．
+
+- AviUtl (無印) の場合
+
+  `0` から `3` の整数を指定します．数値と指定の対応は以下の通り:
+
+  | 数値 | 指定 |
+  |:---:|:---:|
+  | `0` | `通常` |
+  | `1` | `左右反転` |
+  | `2` | `上下反転` |
+  | `3` | `180°反転` |
+
+- AviUtl ExEdit2 の場合
+
+  `通常`, `左右反転`, `上下反転`, `180°反転` の 4 つから選びます．
+
+初期値は `通常`.
+
+- [`PI`](#pi) で指定する場合の数値との対応は，AviUtl (無印) 版の対応と同じです．
+
 ### フィルタ効果 (アニメーション効果) の設定項目
 
 <img width="720" height="222" alt="AviUtl1のアニメーション効果版のGUIその1" src="https://github.com/user-attachments/assets/df7e0552-840d-4264-a5a7-b05224404369" />
@@ -181,6 +224,40 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 <img width="298" height="294" alt="AviUtl1のシーンチェンジのGUIその2" src="https://github.com/user-attachments/assets/8c408231-deaa-410c-9819-206c5d3ba39c" />
 
 <img width="500" height="316" alt="AviUtl2のシーンチェンジのGUI" src="https://github.com/user-attachments/assets/5e7aae49-5588-4f32-a9ed-1a700d148fe9" />
+
+####  `裏地`
+
+丸めたページの裏側の画像を指定します．
+
+- AviUtl (無印) の場合
+
+  `0` から `3` の整数を指定します．数値と指定の対応は以下の通り:
+
+  | 数値 | 指定 |
+  |:---:|:---:|
+  | `0` | `上側` |
+  | `1` | `下側` |
+  | `2` | `指定画像` |
+  | `3` | tempbuffer |
+
+- AviUtl ExEdit2 の場合
+
+  `上側`, `下側`, `指定画像` の 3 つから選びます．
+
+指定の意味は以下の通りです:
+
+| 指定 | 意味 |
+|:---:|:---|
+| `上側` | 丸められる側のシーンの画像． |
+| `下側` | 丸められない側のシーンの画像． |
+| `指定画像` | [`裏地画像`](#裏地画像) で指定した画像． |
+| tempbuffer | 現在の仮想バッファの内容． |
+
+- tempbuffer は他スクリプトからの利用や，スクリプト制御を使った特殊な用途を想定しての指定です．予め tempbuffer を用意しておくなどしてから利用してください．このスクリプトは必要なら tempbuffer の内容を取得した後，上書きすることがある点にも注意．
+
+初期値は `上側`.
+
+- [`PI`](#pi) で指定する場合の数値との対応は，AviUtl (無印) 版の対応と同じです．AviUtl ExEdit2 版の場合，tempbuffer の指定は `PI` 経由でのみ可能です．
 
 ####  `反転`
 
@@ -214,16 +291,28 @@ AviUtl ExEdit2 版にのみあります．AviUtl (無印) のシーンチェン�
 
 ```lua
 {
-  distance = distance, -- number 型で "距離" の項目を上書き，または nil.
-  angle = angle,       -- number 型で "角度" の項目を上書き，または nil.
-  width = width,       -- number 型で "太さ" の項目を上書き，または nil.
-  X = X,               -- number 型で "視点X" の項目を上書き，または nil.
-  Y = Y,               -- number 型で "視点Y" の項目を上書き，または nil.
-  fov = fov,           -- number 型で "視野角" の項目を上書き，または nil.
-  shadow = shadow,     -- number 型で "陰影" の項目を上書き，または nil.
-  unbound = unbound,   -- boolean 型で "領域外も描画" の項目を上書き，または nil. 0 を false, 0 以外を true 扱いとして number 型も可能．
+  distance = distance,       -- number 型で "距離" の項目を上書き，または nil.
+  angle = angle,             -- number 型で "角度" の項目を上書き，または nil.
+  width = width,             -- number 型で "太さ" の項目を上書き，または nil.
+  X = X,                     -- number 型で "視点X" の項目を上書き，または nil.
+  Y = Y,                     -- number 型で "視点Y" の項目を上書き，または nil.
+  fov = fov,                 -- number 型で "視野角" の項目を上書き，または nil.
+  shadow = shadow,           -- number 型で "陰影" の項目を上書き，または nil.
+  unbound = unbound,         -- boolean 型で "領域外も描画" の項目を上書き，または nil. 0 を false, 0 以外を true 扱いとして number 型も可能．
+  backface = backface,       -- number 型で裏地の参照元を指定 (下記の解説参照).
+  file_image = file_image,   -- string 型で "裏地画像" の項目を上書き，または nil.
+  back_orient = back_orient, -- number 型で "裏地向き" の項目を上書き，または nil.
 }
 ```
+- `backface` の指定は `0` から `3` の整数で，以下の通り:
+
+  | 数値 | 指定 |
+  |:---:|:---|
+  | `0` | フィルタ効果の対象オブジェクトの画像． |
+  | `1` | `裏地画像` (または `file_image` フィールド) のファイル． |
+  | `2` | framebuffer の内容． |
+  | `3` | tempbuffer の内容． |
+
 - テキストボックスには冒頭末尾の波括弧 (`{}`) を省略して記述してください．
 
 ####  シーンチェンジの `PI` (AviUtl (無印) 版)
@@ -244,14 +333,17 @@ AviUtl ExEdit2 版にのみあります．AviUtl (無印) のシーンチェン�
 
 ```lua
 {
-  angle = angle,     -- number 型で "角度" の項目を上書き，または nil.
-  width = width,     -- number 型で "太さ" の項目を上書き，または nil.
-  X = X,             -- number 型で "視点X" の項目を上書き，または nil.
-  Y = Y,             -- number 型で "視点Y" の項目を上書き，または nil.
-  fov = fov,         -- number 型で "視野角" の項目を上書き，または nil.
-  shadow = shadow,   -- number 型で "陰影" の項目を上書き，または nil.
-  reverse = reverse, -- boolean 型で "反転" の項目を上書き，または nil. 0 を false, 0 以外を true 扱いとして number 型も可能．
-  phase = phase,     -- number 型でシーンチェンジの進捗を直接指定 (0.0 -- 1.0)，または nil.
+  angle = angle,             -- number 型で "角度" の項目を上書き，または nil.
+  width = width,             -- number 型で "太さ" の項目を上書き，または nil.
+  X = X,                     -- number 型で "視点X" の項目を上書き，または nil.
+  Y = Y,                     -- number 型で "視点Y" の項目を上書き，または nil.
+  fov = fov,                 -- number 型で "視野角" の項目を上書き，または nil.
+  shadow = shadow,           -- number 型で "陰影" の項目を上書き，または nil.
+  backface = backface,       -- number 型で "裏地" の項目を上書き，または nil.
+  file_image = file_image,   -- string 型で "裏地画像" の項目を上書き，または nil.
+  back_orient = back_orient, -- number 型で "裏地向き" の項目を上書き，または nil.
+  reverse = reverse,         -- boolean 型で "反転" の項目を上書き，または nil. 0 を false, 0 以外を true 扱いとして number 型も可能．
+  phase = phase,             -- number 型でシーンチェンジの進捗を直接指定 (0.0 -- 1.0)，または nil.
 }
 ```
 - テキストボックスには冒頭末尾の波括弧 (`{}`) を省略して記述してください．
@@ -262,7 +354,7 @@ AviUtl ExEdit2 版にのみあります．AviUtl (無印) のシーンチェン�
 
     ```lua
     --
-    -- VERSION: v1.00
+    -- VERSION: v1.10
     --
     ```
 
@@ -275,6 +367,12 @@ AviUtl ExEdit2 版にのみあります．AviUtl (無印) のシーンチェン�
 
 
 ## 改版履歴
+
+- **v1.10 (for beta13)** (2025-10-??)
+
+  - 丸めたページの「裏地」の画像や向きを指定できるように．
+
+  - `beta13` で動作確認．
 
 - **v1.00 (for beta12)** (2025-09-25)
 
