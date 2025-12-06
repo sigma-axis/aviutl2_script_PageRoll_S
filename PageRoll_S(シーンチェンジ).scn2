@@ -74,9 +74,9 @@ obj.setanchor("track", 0, "line");
 		Y:				number?,
 		fov:			number?,
 		shadow:			number?,
-		backface:		number?,
+		backface:		string?,
 		file_image:		string?,
-		back_orient:	number?,
+		back_orient:	string?,
 		reverse:		boolean|number|nil,
 		phase:			number?,
 	}
@@ -92,9 +92,19 @@ local X = tonumber(PI.X) or obj.track0;
 local Y = tonumber(PI.Y) or obj.track1;
 fov = tonumber(PI.fov) or fov;
 shadow = tonumber(PI.shadow) or shadow;
-backface = tonumber(PI.backface) or backface;
+if PI.backface then
+	local name2num = {
+		[0] = 0, 1, 2; -- legacy compatibility.
+		["上側"] = 0, ["下側"] = 1, ["指定画像"] = 2
+	};
+	backface = name2num[PI.backface] or backface;
+end
 file_image = type(PI.file_image) == "string" and PI.file_image or file_image;
-back_orient = tonumber(PI.back_orient) or back_orient;
+if type(PI.back_orient) == "string" then back_orient = PI.back_orient;
+else
+	-- legacy compatibility.
+	back_orient = tonumber(PI.back_orient) or back_orient;
+end
 reverse = as_bool(PI.reverse, reverse ~= 0);
 local phase = tonumber(PI.phase) or obj.getvalue("scenechange");
 
@@ -108,7 +118,11 @@ if #file_image < 4 then
 	-- no valid file name.
 	if backface == 2 then backface = 0 end
 end
-back_orient = math.min(math.max(math.floor(0.5 + back_orient), 0), 3);
+if type(back_orient) ~= "string" then
+	back_orient = ({
+		[0] = "通常", "左右反転", "上下反転", "180°反転"
+	})[back_orient] or "通常";
+end
 phase = math.min(math.max(phase, 0), 1);
 
 -- further calculations.
@@ -124,7 +138,7 @@ local distance = phase * (width / 2 + math.abs(s) * obj.screen_w + math.abs(c) *
 
 -- apply rolling deformation.
 obj.effect("PageRoll_S", "PI",
-	("distance=%s,angle=%s,width=%s,X=%s,Y=%s,fov=%s,shadow=%s,unbound=false,backface=%d,back_orient=%d,file_image=%q"):format(
+	("distance=%s,angle=%s,width=%s,X=%s,Y=%s,fov=%s,shadow=%s,unbound=false,backface=%d,back_orient=%q,file_image=%q"):format(
 		distance, 180 / math.pi * angle, width, X, Y, 180 / math.pi * fov, 100 * shadow,
 		backface == 0 and 0 or backface == 1 and 2 or backface == 2 and 1 or backface,
 		back_orient, file_image));

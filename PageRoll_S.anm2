@@ -150,7 +150,13 @@ shadow = tonumber(PI.shadow) or shadow;
 unbound = as_bool(PI.unbound, unbound);
 local backface = tonumber(PI.backface) or 1;
 file_image = type(PI.file_image) == "string" and PI.file_image or file_image;
-back_orient = tonumber(PI.back_orient) or back_orient;
+if PI.back_orient then
+	local name2num = {
+		[0] = 0, 1, 2, 3;
+		["通常"] = 0, ["左右反転"] = 1, ["上下反転"] = 2, ["180°反転"] = 3
+	};
+	back_orient = name2num[PI.back_orient] or back_orient;
+end
 
 -- normalize parameters.
 distance = math.max(distance, 0);
