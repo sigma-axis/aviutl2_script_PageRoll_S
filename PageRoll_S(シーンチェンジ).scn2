@@ -23,7 +23,7 @@ SOFTWARE.
 https://mit-license.org/
 ]]
 
---information:PageRoll_S(シーンチェンジ) v1.11-beta1 (for beta22a) by σ軸
+--information:PageRoll_S(シーンチェンジ) v1.11 (for beta22a) by σ軸
 --label:シーンチェンジ
 --track@angle:角度,-720,720,-90,0.01
 --track@width:太さ,2,150,20,0.01

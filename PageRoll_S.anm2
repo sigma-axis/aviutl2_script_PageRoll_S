@@ -23,7 +23,7 @@ SOFTWARE.
 https://mit-license.org/
 ]]
 
---information:PageRoll_S v1.11-beta1 (for beta22a) by σ軸
+--information:PageRoll_S v1.11 (for beta22a) by σ軸
 --label:変形
 --track@distance:距離,0,4000,0,0.01
 --track@angle:角度,-720,720,-90,0.01
