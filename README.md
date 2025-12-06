@@ -102,7 +102,7 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 <img width="298" height="326" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/fa94d167-1027-47d1-9e34-18939c6951e6" />
 
-<img width="500" height="422" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/449595e2-ee50-460e-908a-0dd974d4a89b" />
+<img width="500" height="528" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/793fd9ec-874b-4026-a733-f803714cf69e" />
 
 ####  角度
 
@@ -205,7 +205,7 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 <img width="298" height="326" alt="AviUtl1のアニメーション効果版のGUIその2" src="https://github.com/user-attachments/assets/fa94d167-1027-47d1-9e34-18939c6951e6" />
 
-<img width="500" height="422" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/449595e2-ee50-460e-908a-0dd974d4a89b" />
+<img width="500" height="528" alt="AviUtl2のフィルタ効果版のGUI" src="https://github.com/user-attachments/assets/793fd9ec-874b-4026-a733-f803714cf69e" />
 
 ####  距離
 
@@ -225,7 +225,7 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 <img width="298" height="388" alt="AviUtl1のシーンチェンジのGUIその2" src="https://github.com/user-attachments/assets/4ead1abe-148f-44e2-99bf-4f0b99d9785a" />
 
-<img width="500" height="422" alt="AviUtl2のシーンチェンジのGUI" src="https://github.com/user-attachments/assets/54dd6581-ac54-476a-8b18-8d29f2db51da" />
+<img width="500" height="528" alt="AviUtl2のシーンチェンジのGUI" src="https://github.com/user-attachments/assets/0896843e-591d-4dc6-a761-8ef92b917abc" />
 
 ####  裏地
 
