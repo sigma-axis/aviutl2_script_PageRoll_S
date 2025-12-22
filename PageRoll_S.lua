@@ -24,7 +24,7 @@ https://mit-license.org/
 ]]
 
 --
--- VERSION: v1.11
+-- VERSION: v1.12
 --
 
 --------------------------------

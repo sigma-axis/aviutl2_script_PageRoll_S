@@ -44,7 +44,7 @@ https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
 
   http://spring-fragrance.mints.ne.jp/aviutl
 
-  - `beta22a` で動作確認済み．
+  - `beta25` で動作確認済み．
 
 ## 導入方法
 
@@ -216,6 +216,8 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 ####  領域外も描画
 
 オブジェクトの画像サイズを拡げて，丸まった部分がサイズ内に収まるようにします．
+
+- AviUtl2 版の場合でフィルタオブジェクトとして使用した場合，無視されます (常に OFF 相当).
 
 初期値は ON.
 
@@ -394,7 +396,7 @@ AviUtl ExEdit2 版にのみあります．AviUtl (無印) のシーンチェン�
 
 ## 改版履歴
 
-- **v1.12 (for beta25)** (2025-12-??)
+- **v1.12 (for beta25)** (2025-12-22)
 
   - AviUtl2 版のフィルタ効果をフィルタオブジェクトとして使えるよう設定．
   - `beta25` で動作確認．
