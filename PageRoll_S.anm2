@@ -23,8 +23,9 @@ SOFTWARE.
 https://mit-license.org/
 ]]
 
---information:PageRoll_S v1.11 (for beta22a) by σ軸
+--information:PageRoll_S v1.12-beta2 (for beta25) by σ軸
 --label:変形
+--filter
 --track@distance:距離,0,4000,0,0.01
 --track@angle:角度,-720,720,-90,0.01
 --track@width:太さ,8,4000,80,0.01
@@ -147,7 +148,8 @@ local X = tonumber(PI.X) or obj.track0;
 local Y = tonumber(PI.Y) or obj.track1;
 fov = tonumber(PI.fov) or fov;
 shadow = tonumber(PI.shadow) or shadow;
-unbound = as_bool(PI.unbound, unbound);
+unbound = as_bool(PI.unbound, unbound)
+	and not (obj.getinfo("version") >= 2002400 and obj.getinfo("filter"));
 local backface = tonumber(PI.backface) or 1;
 file_image = type(PI.file_image) == "string" and PI.file_image or file_image;
 if PI.back_orient then
