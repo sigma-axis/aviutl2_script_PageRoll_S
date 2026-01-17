@@ -281,11 +281,11 @@ AviUtl ExEdit2 版にのみあります．AviUtl (無印) のシーンチェン�
 
 ```lua
 {
-  [0] = track0, -- boolean 型で "領域外も描画" の項目を上書き，または nil. 0 を false, 0 以外を true 扱いとして number 型も可能．
-  [1] = track1, -- number 型で "距離" の項目を上書き，または nil.
-  [2] = track2, -- number 型で "角度" の項目を上書き，または nil.
-  [3] = track3, -- number 型で "太さ" の項目を上書き，または nil.
-  [4] = check0, -- number 型で "陰影" の項目を上書き，または nil.
+  [0] = check0, -- boolean 型で "領域外も描画" の項目を上書き，または nil. 0 を false, 0 以外を true 扱いとして number 型も可能．
+  [1] = track0, -- number 型で "距離" の項目を上書き，または nil.
+  [2] = track1, -- number 型で "角度" の項目を上書き，または nil.
+  [3] = track2, -- number 型で "太さ" の項目を上書き，または nil.
+  [4] = track3, -- number 型で "陰影" の項目を上書き，または nil.
 }
 ```
 
