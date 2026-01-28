@@ -67,6 +67,13 @@ https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
           - AviUtl2 のメニューの「その他」 :arrow_right: 「アプリケーションデータ」 :arrow_right: 「スクリプトフォルダ」で表示されます．
       1.  (1) のフォルダにある任意の名前のフォルダ
 
+### For non-Japanese speaking users
+
+You may be able to find language translation file for this script from [this repository](https://github.com/sigma-axis/aviutl2_translations_sigma-axis). 
+Translation files enable names and parameters of the scripts / filters to be displayed in other languages.
+
+Although, usage documentations for this script in languages other than Japanese are not available now.
+
 ##  スクリプトの種類
 
 フィルタ効果 (アニメーション効果) とシーンチェンジが 1 つずつ追加されます．
