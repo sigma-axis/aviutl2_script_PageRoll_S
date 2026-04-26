@@ -22,6 +22,12 @@ https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
   1.  https://www.pexels.com/photo/assorted-car-license-plates-533669
   </details>
 
+##  お願い
+
+このスクリプトを使った動画などでは，ニコニコの親作品にこのスクリプトの紹介動画を登録してくれると嬉しいです．任意ではありますが，登録してくれたほうが励みになります．
+
+- 登録 ID: `sm45441228`
+
 ##  動作要件
 
 ### AviUtl (無印)
