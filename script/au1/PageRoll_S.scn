@@ -24,7 +24,7 @@ https://mit-license.org/
 ]]
 
 --
--- VERSION: v1.12
+-- VERSION: ${ver}
 --
 
 --track0:角度,-720,720,-90,0.01

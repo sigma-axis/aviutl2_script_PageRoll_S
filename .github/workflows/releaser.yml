@@ -14,6 +14,39 @@ permissions:
   contents: read
 
 jobs:
+  build:
+    name: Build
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Setup aulua
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(gh api repos/karoterra/aviutl2-aulua/releases/latest --jq '.tag_name')
+          archive="aulua-${tag}-windows-x64.zip"
+          mkdir -p aulua
+          gh release download -R karoterra/aviutl2-aulua $tag -p $archive -D aulua
+          unzip aulua/$archive -d aulua
+          echo `pwd`/aulua > $GITHUB_PATH
+
+      - name: Create package
+        run: aulua pack
+
+      - name: Upload the build as artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          path: build/package.au2pkg.zip
+          archive: false
+
   release:
     name: Create Release
     if: github.event_name == 'push' && github.ref_type == 'tag'
@@ -22,48 +55,70 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v6
-      with:
-        submodules: recursive
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
 
-    - name: Pack and compress
-      run: |
-        mkdir pack
-        mkdir pack/AviUtl1
-        mkdir pack/AviUtl2
-        cp *.anm2 pack/AviUtl2
-        cp *.scn2 pack/AviUtl2
-        cp *.anm pack/AviUtl1
-        cp *.scn pack/AviUtl1
-        cp *.lua pack/AviUtl1
-        cp *.frag pack/AviUtl1
-        cp *.md pack
-        cp LICENSE pack/LICENSE
-        cd pack
-        zip -r ../aviutl2_script_${{ env.REPOSITORY_NAME }}-${{ github.ref_name }}.zip *
-      # rename .zip file for downloading if necessary.
+      - name: Set package version (AviUtl 1)
+        run: |
+          cd script/au1
+          tag="${{ github.ref_name }}"
+          ver="${tag%%-*}"
+          for f in PageRoll_S.anm PageRoll_S.scn PageRoll_S.lua PageRoll_S.frag; do
+            [ -f "$f" ] || continue
+            sed -i 's/\$\{ver\}/'"$ver"'/g' "$f"
+          done
 
-    - name: Prepare release notes
-      id: release-notes
-      run: |
-        echo "name=${{ github.ref_name }} ($(TZ='${{ env.TIME_ZONE }}' date +'%Y-%m-%d'))" >> $GITHUB_OUTPUT
-        echo "### 更新内容" >> ReleaseNotes.txt
-        phase=0
-        IFS=$'\n'
-        cat pack/README.md | while read line; do
-          if [[ $phase == 0 ]]; then
-            if [[ $line =~ ^##*[[:space:]]{1,}'改版履歴'[[:space:]]*$ ]]; then phase=1; fi
-          elif [[ $phase == 1 ]]; then
-            if [[ $line =~ ^-[[:space:]] ]]; then phase=2; fi
-          elif [[ $line =~ ^(-|##*)[[:space:]] ]]; then break
-          else
-            echo ${line:2} >> ReleaseNotes.txt
-          fi
-        done
+      - name: Pack and compress (AviUtl 1)
+        run: |
+          mkdir -p pack_au1
+          cp *.anm pack_au1
+          cp *.scn pack_au1
+          cp *.lua pack_au1
+          cp *.frag pack_au1
+          cp *.md pack_au1
+          cp LICENSE pack_au1
+          cd pack_au1
+          zip -r ../aviutl_script_${{ env.REPOSITORY_NAME }}-${{ github.ref_name }}.zip *
+        # rename .zip file for downloading if necessary.
 
-    - name: Release
-      uses: softprops/action-gh-release@v2
-      with:
-        name: ${{ steps.release-notes.outputs.name }}
-        files: '*.zip'
-        body_path: ReleaseNotes.txt
+      - name: Download the package as an artifact (AviUtl 2)
+        uses: actions/download-artifact@v8
+        with:
+          path: pack_au2
+          merge-multiple: true # assuming a single artifact.
+          skip-decompress: true
+
+      - name: Prepare package (AviUtl 2)
+        run: |
+          cd pack_au2
+          cp package.au2pkg.zip ../aviutl2_script_${{ env.REPOSITORY_NAME }}-${{ github.ref_name }}.au2pkg.zip
+        # rename .zip file for downloading if necessary.
+
+      - name: Prepare release notes
+        id: release-notes
+        run: |
+          echo "name=${{ github.ref_name }} ($(TZ='${{ env.TIME_ZONE }}' date +'%Y-%m-%d'))" >> $GITHUB_OUTPUT
+          echo '### ダウンロードするファイル' >> ReleaseNotes.txt
+          echo '- AviUtl (無印) 版: `aviutl_script_${{ env.REPOSITORY_NAME }}-${{ github.ref_name }}.zip`' >> ReleaseNotes.txt
+          echo '- AviUtl ExEdit2 版: `aviutl2_script_${{ env.REPOSITORY_NAME }}-${{ github.ref_name }}.au2pkg.zip`' >> ReleaseNotes.txt
+          echo "### 更新内容" >> ReleaseNotes.txt
+          phase=0
+          IFS=$'\n'
+          cat README.md | while read line; do
+            if [[ $phase == 0 ]]; then
+              if [[ $line =~ ^##*[[:space:]]{1,}'改版履歴'[[:space:]]*$ ]]; then phase=1; fi
+            elif [[ $phase == 1 ]]; then
+              if [[ $line =~ ^-[[:space:]] ]]; then phase=2; fi
+            elif [[ $line =~ ^(-|##*)[[:space:]] ]]; then break
+            else
+              echo ${line:2} >> ReleaseNotes.txt
+            fi
+          done
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ steps.release-notes.outputs.name }}
+          files: '*.zip'
+          body_path: ReleaseNotes.txt

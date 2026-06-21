@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/karoterra/aviutl2-aulua/refs/heads/main/schema/aulua.schema.json
+project:
+  variables:
+    NAME: PageRoll_S
+    AUTHOR: σ軸
+    LEAST_AVIUTL_VERSION: "2005000"
+    LEAST_AVIUTL_VERSION_STRING: beta50
+
+package:
+  id: PageRoll_S
+  name: ページ丸めスクリプト PageRoll_S
+  version: v1.13-dev (for beta51)
+  information: "{name} {version} by {AUTHOR}"
+  script_sub_dir: ""
+  uninstall_sub_folder_file: false
+  message:
+    text: |
+      # PageRoll_S AviUtl ExEdit2 ページ丸めスクリプト
+
+      ページを丸めるように画像を変形するフィルタ効果と，シーンチェンジです．AviUtl (無印) のシーンチェンジ「ロール(横)」「ロール(縦)」の拡張版・AviUtl2 移植版で，めくる方向を斜めにしたり，丸める部分の太さの調整などの追加機能があります．
+
+      公開ページ:
+      https://github.com/sigma-axis/aviutl2_script_PageRoll_S
+
+      紹介動画:
+      https://www.nicovideo.jp/watch/sm45441228
+
+      お願い:
+      ニコニコ動画での親作品登録をしていただけると励みになります．
+      作品 ID: sm45441228
+
+  assets:
+    - src: README.md
+      dest: Script/{id}/README.md
+    - src: LICENSE
+      dest: Script/{id}/LICENSE
+  file_name: package.au2pkg.zip
+
+build:
+  out_dir: build
+
+scripts:
+  - name: PageRoll_S.anm2
+    sources:
+      - path: script/au2/preamble.lua
+      - path: script/au2/effect.lua
+
+  - name: PageRoll_S(シーンチェンジ).scn2
+    sources:
+      - path: script/au2/preamble.lua
+      - path: script/au2/transition.lua

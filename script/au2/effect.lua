@@ -1,124 +1,56 @@
---[[
-MIT License
-Copyright (c) 2025 sigma-axis
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-https://mit-license.org/
-]]
-
---information:PageRoll_S v1.12 (for beta25) by σ軸
+--information:PageRoll_S ${PACKAGE_VERSION} by ${AUTHOR}
 --label:変形
 --filter
---track@distance:距離,0,4000,0,0.01
---track@angle:角度,-720,720,-90,0.01
---track@width:太さ,8,4000,80,0.01
+--require:${LEAST_AVIUTL_VERSION}
+---$track:距離, min = 0, max = 4000, step = 0.01, scale = 0.5
+local distance = 0
+
+---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
+local angle = -90
+
+---$track:太さ, min = 8, max = 4000, step = 0.01
+local width = 80
+
 --group:カメラ設定,false
---track0:視点X,-4000,4000,0,0.01
---track1:視点Y,-4000,4000,0,0.01
---track@fov:視野角,0,120,70,0.01
+---$track:視点X, min = -4000, max = 4000, step = 0.01, scale = 0.25
+local X = 0
+
+---$track:視点Y, min = -4000, max = 4000, step = 0.01, scale = 0.25
+local Y = 0
+
+--trackgroup@X,Y:camera_pos
+---$track:視野角, min = 0, max = 120, step = 0.01
+local fov = 70
+
 --group
---track@shadow:陰影,0,100,50,0.01
---check@unbound:領域外も描画,true
+---$track:陰影, min = 0, max = 100, step = 0.01
+local shadow = 50
+
+---$checksection:領域外も描画
+local unbound = true
+
 --group:裏地設定,false
---file@file_image:裏地画像
---select@back_orient:裏地向き=0,通常=0,左右反転=1,上下反転=2,180°反転=3
+---$file:裏地画像
+local file_image = ""
+
+---$select:裏地向き
+---通常 = 0
+---左右反転 = 1
+---上下反転 = 2
+---180°反転 = 3
+local back_orient = 0
+
 --group:その他,false
---value@PI:PI,{}
+---$value:PI
+local PI = {}
+
 --[[pixelshader@apply:
-Texture2D img : register(t0);
-Texture2D back : register(t1);
-cbuffer constant0 : register(b0) {
-	float2 size, offset, dir, tilt_z, view_center,
-		back_x, back_y;
-	float radius, hf_width, tan_hf_roll, shadow;
-};
-float4 thicken(float4 col, float density)
-{
-	const float r = col.a < 1.0 / 1024 ? density * (1 - col.a) :
-		(1 - pow(max(1 - col.a, 0), density)) / col.a;
-	return r * col;
-}
-float4 blend(float4 col_base, float4 col_over)
-{
-	return (1 - col_over.a) * col_base + col_over;
-}
-
-float4 pick(float2 pos, Texture2D src)
-{
-	const int2 ipos = floor(pos - 0.5);
-	pos -= ipos + 0.5;
-	return lerp(
-		lerp(src.Load(int3(ipos + int2(0, 0), 0)), src.Load(int3(ipos + int2(1, 0), 0)), pos.x),
-		lerp(src.Load(int3(ipos + int2(0, 1), 0)), src.Load(int3(ipos + int2(1, 1), 0)), pos.x),
-		pos.y);
-}
-float4 pick_back(float2 pos)
-{
-	return pick(float2(
-		dot(back_x, float2(pos.x, 1)),
-		dot(back_y, float2(pos.y, 1))),
-	back);
-}
-float4 apply(float4 pos : SV_Position) : SV_Target
-{
-	const float2 pos0 = pos.xy - offset;
-	const float l = dot(dir, pos0 - view_center);
-	float4 col = l >= 0 ? img.Load(int3(pos0 - 0.5, 0)) : 0;
-
-	if (-hf_width <= l && l <= hf_width) {
-		static const float pi = 3.141592653589793;
-		const float r = abs(l / radius), s = r * tan_hf_roll,
-			a00 = atan(s), a01 = acos(min((r - s) / sqrt(1 + s * s), 1)),
-			a1 = l < 0 ? pi / 2 + a00 - a01 : 1.5 * pi - a00 + a01,
-			a2 = l < 0 ? pi / 2 + a00 + a01 : 1.5 * pi - a00 - a01,
-			z1 = radius * (1 - cos(a1)), z2 = radius * (1 - cos(a2)),
-			h = sqrt(max(1 - l * l / (hf_width * hf_width), 0)),
-			sh = 1 - (1 - h) * shadow,
-			density = 1 / max(h, 1.0 / 1024);
-
-		const float2 pt0 = pos0 - l * dir,
-			tilt_z0 = dot(tilt_z, pos0 - view_center) * tilt_z,
-			roll = -2 * pi * radius * dir;
-		float4 col_b = 0, col_f = 0;
-		for (float2 pt = pt0 - a1 * radius * dir - z1 * tilt_z0;
-			all(roll < 0 ? pt >= -0.5 : pt < size + 0.5);
-			pt += roll)
-			col_b = blend(col_b, thicken(pick(pt, img), density));
-		for (pt = pt0 - a2 * radius * dir - z2 * tilt_z0;
-			all(roll < 0 ? pt >= -0.5 : pt < size + 0.5);
-			pt += roll)
-			col_f = blend(thicken(pick_back(pt), density), col_f);
-
-		col_b.rgb *= sh;
-		col_b = blend(col_b, col_f);
-		col_b.rgb *= sh;
-		col_b *= saturate(hf_width - abs(l));
-		col = blend(col, col_b);
-	}
-	return col;
-}
+---$include "effect_apply.hlsl"
 ]]
 local obj, math, tonumber, type, unpack = obj, math, tonumber, type, unpack;
 
 -- set anchors.
-obj.setanchor("track", 0, "line");
+obj.setanchor("X,Y", 0, "line");
 
 -- take parameters.
 --[==[
@@ -144,17 +76,16 @@ end
 distance = tonumber(PI.distance) or distance;
 angle = tonumber(PI.angle) or angle;
 width = tonumber(PI.width) or width;
-local X = tonumber(PI.X) or obj.track0;
-local Y = tonumber(PI.Y) or obj.track1;
+X = tonumber(PI.X) or X;
+Y = tonumber(PI.Y) or Y;
 fov = tonumber(PI.fov) or fov;
 shadow = tonumber(PI.shadow) or shadow;
-unbound = as_bool(PI.unbound, unbound)
-	and not (obj.getinfo("version") >= 2002400 and obj.getinfo("filter"));
+unbound = as_bool(PI.unbound, unbound) and not obj.getinfo("filter");
 local backface = tonumber(PI.backface) or 1;
 file_image = type(PI.file_image) == "string" and PI.file_image or file_image;
 if PI.back_orient then
 	local name2num = {
-		[0] = 0, 1, 2, 3;
+		[0] = 0, 1, 2, 3; -- legacy compatibility.
 		["通常"] = 0, ["左右反転"] = 1, ["上下反転"] = 2, ["180°反転"] = 3
 	};
 	back_orient = name2num[PI.back_orient] or back_orient;
@@ -254,7 +185,7 @@ if unbound and distance > 0 then
 end
 
 -- load the image if specified.
-local obj_props = { obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.zoom, obj.aspect, obj.alpha };
+local obj_props = { obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.alpha };
 local cache_name = "cache:pageroll_s/obj";
 local has_image, img_x, img_x0, img_y, img_y0 = backface > 0, 1, 0, 1, 0;
 if has_image then
@@ -295,16 +226,16 @@ if back_orient % 2 == 1 then img_x, img_x0 = -img_x, w * img_x end
 if back_orient >= 2 then img_y, img_y0 = -img_y, h * img_y end
 
 -- draw by shader.
-obj.setoption("drawtarget", "tempbuffer", L + w + R, T + h + B);
+obj.clearbuffer("tempbuffer", L + w + R, T + h + B);
 obj.pixelshader("apply", "tempbuffer", { has_image and cache_name or "object", "object" }, {
 	w, h; L, T;
 	s, -c; tilt_z * c, tilt_z * s;
 	pos_x, pos_y;
-	img_x, img_x0; img_y, img_y0;
+	img_x, img_y; img_x0, img_y0;
 	radius, width / 2, (width / D) * fov_rate * rad_rate, shadow,
-});
+}, "copy", "clip");
 obj.copybuffer("object", "tempbuffer");
 
 -- adjust the center.
-obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.zoom, obj.aspect, obj.alpha = unpack(obj_props);
+obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.alpha = unpack(obj_props);
 obj.cx, obj.cy = obj.cx + (L - R) / 2, obj.cy + (T - B) / 2;

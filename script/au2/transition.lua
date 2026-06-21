@@ -1,69 +1,59 @@
---[[
-MIT License
-Copyright (c) 2025 sigma-axis
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-https://mit-license.org/
-]]
-
---information:PageRoll_S(シーンチェンジ) v1.12 (for beta25) by σ軸
+--information:PageRoll_S(シーンチェンジ) ${PACKAGE_VERSION} by ${AUTHOR}
 --label:シーンチェンジ
---track@angle:角度,-720,720,-90,0.01
---track@width:太さ,2,150,20,0.01
+--require:${LEAST_AVIUTL_VERSION}
+---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
+local angle = -90
+
+---$track:太さ, min = 2, max = 150, step = 0.01
+local width = 20
+
 --group:カメラ設定,false
---track0:視点X,-4000,4000,0,0.01
---track1:視点Y,-4000,4000,0,0.01
---track@fov:視野角,0,120,70,0.01
+---$track:視点X, min = -4000, max = 4000, step = 0.01
+local X = 0
+
+---$track:視点Y, min = -4000, max = 4000, step = 0.01
+local Y = 0
+
+--trackgroup@X,Y:camera_pos
+---$track:視野角, min = 0, max = 120, step = 0.01
+local fov = 70
+
 --group
---track@shadow:陰影,0,100,50,0.01
+---$track:陰影, min = 0, max = 100, step = 0.01
+local shadow = 50
+
 --group:裏地設定,false
---select@backface:裏地=0,上側=0,下側=1,指定画像=2
---file@file_image:裏地画像
---select@back_orient:裏地向き=0,通常=0,左右反転=1,上下反転=2,180°反転=3
+---$select:裏地
+---上側 = 0
+---下側 = 1
+---指定画像 = 2
+local backface = 0
+
+---$file:裏地画像
+local file_image = ""
+
+---$select:裏地向き
+---通常 = 0
+---左右反転 = 1
+---上下反転 = 2
+---180°反転 = 3
+local back_orient = 0
+
 --group
---check@reverse:反転,false
+---$checksection:反転
+local reverse = false
+
 --group:その他,false
---value@PI:PI,{}
+---$value:PI
+local PI = {}
+
 --[[pixelshader@combine:
-Texture2D img_prev : register(t0);
-Texture2D img_next : register(t1);
-cbuffer constant0 : register(b0) {
-	float2 dir, view_center;
-	float shadow;
-};
-float4 blend(float4 col_base, float4 col_over)
-{
-	return (1 - col_over.a) * col_base + col_over;
-}
-float4 combine(float4 pos : SV_Position) : SV_Target
-{
-	const float l = dot(dir, pos.xy - view_center);
-	float4 col = saturate(0.5 - 2 * l) * img_next.Load(int3(pos.xy, 0));
-	col.rgb *= 1 - shadow * saturate(1 + (2.0 / 3) * l);
-	return blend(col, img_prev.Load(int3(pos.xy, 0)));
-}
+---$include "transition_combine.hlsl"
 ]]
 local obj, math, tonumber, type = obj, math, tonumber, type;
 
 -- set anchors.
-obj.setanchor("track", 0, "line");
+obj.setanchor("X,Y", 0, "line");
 
 -- take parameters.
 --[==[
@@ -88,8 +78,8 @@ local function as_bool(t, v)
 end
 angle = tonumber(PI.angle) or angle;
 width = tonumber(PI.width) or width;
-local X = tonumber(PI.X) or obj.track0;
-local Y = tonumber(PI.Y) or obj.track1;
+X = tonumber(PI.X) or X;
+Y = tonumber(PI.Y) or Y;
 fov = tonumber(PI.fov) or fov;
 shadow = tonumber(PI.shadow) or shadow;
 if PI.backface then
