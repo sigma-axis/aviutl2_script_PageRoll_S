@@ -8,7 +8,7 @@ local distance = 0
 ---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
 local angle = -90
 
----$track:太さ, min = 8, max = 4000, step = 0.01
+---$track:太さ, min = 8, max = 4000, step = 0.01, scale = 0.125
 local width = 80
 
 --group:カメラ設定,false

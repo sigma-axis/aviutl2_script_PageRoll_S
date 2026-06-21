@@ -4,14 +4,14 @@
 ---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
 local angle = -90
 
----$track:太さ, min = 2, max = 150, step = 0.01
+---$track:太さ, min = 2, max = 150, step = 0.01, scale = 0.33334
 local width = 20
 
 --group:カメラ設定,false
----$track:視点X, min = -4000, max = 4000, step = 0.01
+---$track:視点X, min = -4000, max = 4000, step = 0.01, scale = 0.25
 local X = 0
 
----$track:視点Y, min = -4000, max = 4000, step = 0.01
+---$track:視点Y, min = -4000, max = 4000, step = 0.01, scale = 0.25
 local Y = 0
 
 --trackgroup@X,Y:camera_pos
