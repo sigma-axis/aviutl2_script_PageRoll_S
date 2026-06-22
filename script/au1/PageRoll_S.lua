@@ -271,15 +271,16 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 
 	-- prepare the canvas.
 	if L > 0 or R > 0 or T > 0 or B > 0 then
-		local L1, R1, T1, B1 = L, R, T, B;
+		local L1, R1, T1, B1, cx, cy = L, R, T, B, obj.cx, obj.cy;
 		while L1 > 0 or R1 > 0 or T1 > 0 or B1 > 0 do
 			-- can extend up to only 4000 pixels.
 			local L2, R2, T2, B2 =
 				math.min(L1, 4000), math.min(R1, 4000),
 				math.min(T1, 4000), math.min(B1, 4000);
 			L1, R1, T1, B1 = L1 - L2, R1 - R2, T1 - T2, B1 - B2;
-			obj.effect("領域拡張","左", L2, "右", R2, "上", T2, "下", B2, "中心の位置を変更", 1);
+			obj.effect("領域拡張","左", L2, "右", R2, "上", T2, "下", B2);
 		end
+		obj.cx, obj.cy = cx, cy;
 	end
 
 	-- invoke the shader.
