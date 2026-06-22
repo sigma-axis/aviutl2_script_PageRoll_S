@@ -185,16 +185,17 @@ if unbound and distance > 0 then
 end
 
 -- load the image if specified.
-local obj_props = { obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.alpha };
 local cache_name = "cache:pageroll_s/obj";
-local has_image, img_x, img_x0, img_y, img_y0 = backface > 0, 1, 0, 1, 0;
-if has_image then
+local img_x, img_x0, img_y, img_y0 = 1, 0, 1, 0;
+if backface > 0 then
 	obj.copybuffer(cache_name, "object");
 
 	-- try loading the specified image.
+	local has_image = true;
 	if backface == 1 then
-		obj.load("image", file_image);
-		has_image = obj.w > 0 and obj.h > 0;
+		local obj_props = { obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.alpha };
+		has_image = obj.load("image", file_image);
+		obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.alpha = unpack(obj_props);
 	else
 		has_image = obj.copybuffer("object",
 			backface == 2 and "framebuffer" or "tempbuffer");
@@ -202,40 +203,45 @@ if has_image then
 	if not has_image then
 		-- no valid image.
 		obj.copybuffer("object", cache_name);
+		backface = 0;
 	end
 
 	-- crop to match the aspect ratio.
 	if obj.w * h < obj.h * w then
-		local dh = math.min(math.floor(0.5 + obj.h - obj.w * h / w), obj.h - 1);
-		if dh > 0 then
-			local dh2 = math.floor(dh / 2);
-			obj.effect("クリッピング", "上", dh - dh2, "下", dh2);
+		local top = math.min(math.floor(0.5 + obj.h - obj.w * h / w), obj.h - 1);
+		local btm = math.floor(top / 2);
+		top = top - btm;
+		while top > 0 or btm > 0 do
+			local t, b = math.min(top, 4000), math.min(btm, 4000);
+			top, btm = top - t, btm - b;
+			obj.effect("クリッピング", "上", t, "下", b, "中心の位置を変更", 1);
 		end
 	else
-		local dw = math.min(math.floor(0.5 + obj.w - obj.h * w / h), obj.w - 1);
-		if dw > 0 then
-			local dw2 = math.floor(dw / 2);
-			obj.effect("クリッピング", "左", dw - dw2, "右", dw2);
+		local lft = math.min(math.floor(0.5 + obj.w - obj.h * w / h), obj.w - 1);
+		local rit = math.floor(lft / 2);
+		lft = lft - rit;
+		while lft > 0 or rit > 0 do
+			local l, r = math.min(lft, 4000), math.min(rit, 4000);
+			lft, rit = lft - l, rit - r;
+			obj.effect("クリッピング", "左", l, "右", r, "中心の位置を変更", 1);
 		end
 	end
-	img_x, img_y = obj.w / w, obj.h / h;
 end
 
 -- handle the orientation.
-if back_orient % 2 == 1 then img_x, img_x0 = -img_x, w * img_x end
-if back_orient >= 2 then img_y, img_y0 = -img_y, h * img_y end
+if back_orient % 2 == 1 then img_x, img_x0 = -1, 1 end
+if back_orient >= 2 then img_y, img_y0 = -1, 1 end
 
 -- draw by shader.
 obj.clearbuffer("tempbuffer", L + w + R, T + h + B);
-obj.pixelshader("apply", "tempbuffer", { has_image and cache_name or "object", "object" }, {
+obj.pixelshader("apply", "tempbuffer", { backface > 0 and cache_name or "object", "object" }, {
 	w, h; L, T;
 	s, -c; tilt_z * c, tilt_z * s;
 	pos_x, pos_y;
-	img_x, img_y; img_x0, img_y0;
+	img_x / w, img_y / h; img_x0, img_y0;
 	radius, width / 2, (width / D) * fov_rate * rad_rate, shadow,
 }, "copy", "clip");
 obj.copybuffer("object", "tempbuffer");
 
 -- adjust the center.
-obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.alpha = unpack(obj_props);
 obj.cx, obj.cy = obj.cx + (L - R) / 2, obj.cy + (T - B) / 2;

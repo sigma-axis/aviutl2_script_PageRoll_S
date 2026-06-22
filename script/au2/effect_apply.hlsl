@@ -2,7 +2,7 @@ Texture2D img : register(t0);
 Texture2D back : register(t1);
 SamplerState smp : register(s0);
 cbuffer constant0 : register(b0) {
-	float2 size, offset, dir, tilt_z, view_center;
+	float2 size, offset, dir, tilt_z, view_center,
 		back_1, back_0;
 	float radius, hf_width, tan_hf_roll, shadow;
 };
@@ -41,11 +41,11 @@ float4 apply(float4 pos : SV_Position) : SV_Target
 		for (float2 pt = pt0 - a1 * radius * dir - z1 * tilt_z0;
 			all(roll < 0 ? pt >= -0.5 : pt < size + 0.5);
 			pt += roll)
-			col_b = blend(col_b, thicken(img.Sample(smp, pt), density));
+			col_b = blend(col_b, thicken(img.SampleLevel(smp, pt / size, 0), density));
 		for (pt = pt0 - a2 * radius * dir - z2 * tilt_z0;
 			all(roll < 0 ? pt >= -0.5 : pt < size + 0.5);
 			pt += roll)
-			col_f = blend(thicken(back.Sample(smp, back_1 * pt + back_0), density), col_f);
+			col_f = blend(thicken(back.SampleLevel(smp, back_1 * pt + back_0, 0), density), col_f);
 
 		col_b.rgb *= sh;
 		col_b = blend(col_b, col_f);

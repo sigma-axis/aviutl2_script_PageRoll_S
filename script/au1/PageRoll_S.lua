@@ -189,15 +189,17 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 	end
 
 	-- load the image if specified.
-	local obj_props = { obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.zoom, obj.aspect, obj.alpha };
-	local has_image, img_x, img_x0, img_y, img_y0 = backface > 0, 1, 0, 1, 0;
-	if has_image then
+	local img_x, img_x0, img_y, img_y0 = 1, 0, 1, 0;
+	if backface > 0 then
 		local cache_name = backface > 2 and "cache:pageroll_s/obj" or "tmp";
 		obj.copybuffer(cache_name, "obj");
 
 		-- try loading the specified image.
+		local has_image = true;
 		if backface == 1 then
+			local obj_props = { obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.zoom, obj.aspect, obj.alpha };
 			obj.load("image", file_image);
+			obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.zoom, obj.aspect, obj.alpha = unpack(obj_props);
 			local W, H = obj.getpixel();
 			has_image = W > 0 and H > 0;
 		else
@@ -208,23 +210,30 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 		if not has_image then
 			-- no valid image.
 			obj.copybuffer("obj", "tmp");
+			backface = 0;
 		end
 		img_x, img_y = obj.getpixel();
 
 		-- crop to match the aspect ratio.
 		if img_x * h < img_y * w then
-			local dh = math.min(math.floor(0.5 + img_y - img_x * h / w), img_y - 1);
-			if dh > 0 then
-				local dh2 = math.floor(dh / 2);
-				obj.effect("クリッピング", "上", dh - dh2, "下", dh2);
-				img_y = img_y - dh;
+			local top = math.min(math.floor(0.5 + img_y - img_x * h / w), img_y - 1);
+			img_y = img_y - top;
+			local btm = math.floor(top / 2);
+			top = top - btm;
+			while top > 0 or btm > 0 do
+				local t, b = math.min(top, 4000), math.min(btm, 4000);
+				top, btm = top - t, btm - b;
+				obj.effect("クリッピング", "上", t, "下", b, "中心の位置を変更", 1);
 			end
 		else
-			local dw = math.min(math.floor(0.5 + img_x - img_y * w / h), img_x - 1);
-			if dw > 0 then
-				local dw2 = math.floor(dw / 2);
-				obj.effect("クリッピング", "左", dw - dw2, "右", dw2);
-				img_x = img_x - dw;
+			local lft = math.min(math.floor(0.5 + img_x - img_y * w / h), img_x - 1);
+			img_x = img_x - lft;
+			local rit = math.floor(lft / 2);
+			lft = lft - rit;
+			while lft > 0 or rit > 0 do
+				local l, r = math.min(lft, 4000), math.min(rit, 4000);
+				lft, rit = lft - l, rit - r;
+				obj.effect("クリッピング", "左", l, "右", r, "中心の位置を変更", 1);
 			end
 		end
 		img_x, img_y = img_x / w, img_y / h;
@@ -242,7 +251,7 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 	-- send image buffer to gpu.
 	local data, W, H = obj.getpixeldata();
 	GLShaderKit.setTexture2D(1, data, W, H);
-	if has_image then obj.copybuffer("obj", "tmp") end
+	if backface > 0 then obj.copybuffer("obj", "tmp") end
 	GLShaderKit.setTexture2D(0, obj.getpixeldata());
 
 	-- send uniform variables.
@@ -269,7 +278,7 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 				math.min(L1, 4000), math.min(R1, 4000),
 				math.min(T1, 4000), math.min(B1, 4000);
 			L1, R1, T1, B1 = L1 - L2, R1 - R2, T1 - T2, B1 - B2;
-			obj.effect("領域拡張","左", L2, "右", R2, "上", T2, "下", B2);
+			obj.effect("領域拡張","左", L2, "右", R2, "上", T2, "下", B2, "中心の位置を変更", 1);
 		end
 	end
 
@@ -284,7 +293,6 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 	obj.putpixeldata(data);
 
 	-- adjust the center.
-	obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.zoom, obj.aspect, obj.alpha = unpack(obj_props);
 	obj.cx, obj.cy = obj.cx + (L - R) / 2, obj.cy + (T - B) / 2;
 end
 
