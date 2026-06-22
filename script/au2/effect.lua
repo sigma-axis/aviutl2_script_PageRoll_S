@@ -30,6 +30,12 @@ local shadow = 50
 local unbound = true
 
 --group:裏地設定,false
+---$select:裏地種類
+---元画像/画像ファイル = 1
+---フレームバッファ = 2
+---仮想バッファ = 3
+local backface = 1
+
 ---$file:裏地画像
 local file_image = ""
 
@@ -81,7 +87,13 @@ Y = tonumber(PI.Y) or Y;
 fov = tonumber(PI.fov) or fov;
 shadow = tonumber(PI.shadow) or shadow;
 unbound = as_bool(PI.unbound, unbound) and not obj.getinfo("filter");
-local backface = tonumber(PI.backface) or 1;
+if PI.backface then
+	local name2num = {
+		[0] = 0, 1, 2, 3; -- legacy compatibility.
+		["元画像"] = 0, ["元画像/画像ファイル"] = 1, ["フレームバッファ"] = 2, ["仮想バッファ"] = 3
+	};
+	backface = name2num[PI.backface] or backface;
+end
 file_image = type(PI.file_image) == "string" and PI.file_image or file_image;
 if PI.back_orient then
 	local name2num = {

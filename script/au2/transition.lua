@@ -27,6 +27,7 @@ local shadow = 50
 ---上側 = 0
 ---下側 = 1
 ---指定画像 = 2
+---仮想バッファ = 3
 local backface = 0
 
 ---$file:裏地画像
@@ -85,7 +86,7 @@ shadow = tonumber(PI.shadow) or shadow;
 if PI.backface then
 	local name2num = {
 		[0] = 0, 1, 2; -- legacy compatibility.
-		["上側"] = 0, ["下側"] = 1, ["指定画像"] = 2
+		["上側"] = 0, ["下側"] = 1, ["指定画像"] = 2, ["仮想バッファ"] = 3
 	};
 	backface = name2num[PI.backface] or backface;
 end
@@ -103,7 +104,7 @@ angle = math.pi / 180 * angle;
 width = math.max(width / 100 * (obj.screen_w ^ 2 + obj.screen_h ^ 2) ^ 0.5, 8);
 fov = math.min(math.max(math.pi / 180 * fov, 0), (2 / 3) * math.pi);
 shadow = math.min(math.max(shadow / 100, 0), 1);
-backface = math.min(math.max(math.floor(0.5 + backface), 0), 3); -- 3: tempbuffer.
+backface = math.min(math.max(math.floor(0.5 + backface), 0), 3);
 if #file_image < 4 then
 	-- no valid file name.
 	if backface == 2 then backface = 0 end
@@ -128,9 +129,9 @@ local distance = phase * (width / 2 + math.abs(s) * obj.screen_w + math.abs(c) *
 
 -- apply rolling deformation.
 obj.effect("PageRoll_S", "PI",
-	("distance=%s,angle=%s,width=%s,X=%s,Y=%s,fov=%s,shadow=%s,unbound=false,backface=%d,back_orient=%q,file_image=%q"):format(
+	("distance=%s,angle=%s,width=%s,X=%s,Y=%s,fov=%s,shadow=%s,unbound=false,backface=%q,back_orient=%q,file_image=%q"):format(
 		distance, 180 / math.pi * angle, width, X, Y, 180 / math.pi * fov, 100 * shadow,
-		backface == 0 and 0 or backface == 1 and 2 or backface == 2 and 1 or backface,
+		backface == 0 and "元画像" or backface == 1 and "フレームバッファ" or backface == 2 and "元画像/画像ファイル" or "仮想バッファ",
 		back_orient, file_image));
 
 -- shade and combine.
