@@ -34,10 +34,14 @@ local unbound = true
 ---元画像/画像ファイル = 1
 ---フレームバッファ = 2
 ---仮想バッファ = 3
+---一時キャッシュ = 4
 local backface = 1
 
 ---$file:裏地画像
 local file_image = ""
+
+---$string:キャッシュ名
+local cache_name = "my_cache"
 
 ---$select:裏地向き
 ---通常 = 0
@@ -71,6 +75,7 @@ obj.setanchor("X,Y", 0, "line");
 		unbound:		boolean|number|nil,
 		backface:		number?,
 		file_image:		string?,
+		cache_name:		string?,
 		back_orient:	number?,
 	}
 ]==]
@@ -90,11 +95,12 @@ unbound = as_bool(PI.unbound, unbound) and not obj.getinfo("filter");
 if PI.backface then
 	local name2num = {
 		[0] = 0, 1, 2, 3; -- legacy compatibility.
-		["元画像"] = 0, ["元画像/画像ファイル"] = 1, ["フレームバッファ"] = 2, ["仮想バッファ"] = 3
+		["元画像"] = 0, ["元画像/画像ファイル"] = 1, ["フレームバッファ"] = 2, ["仮想バッファ"] = 3, ["一時キャッシュ"] = 4
 	};
 	backface = name2num[PI.backface] or backface;
 end
 file_image = type(PI.file_image) == "string" and PI.file_image or file_image;
+cache_name = type(PI.cache_name) == "string" and PI.cache_name or cache_name;
 if PI.back_orient then
 	local name2num = {
 		[0] = 0, 1, 2, 3; -- legacy compatibility.
@@ -110,7 +116,7 @@ width = math.max(width, 8);
 X, Y = X + obj.w / 2, Y + obj.h / 2;
 fov = math.min(math.max(math.pi / 180 * fov, 0), (2 / 3) * math.pi);
 shadow = math.min(math.max(shadow / 100, 0), 1);
-backface = math.min(math.max(math.floor(0.5 + backface), 0), 3); -- 0: object, 1: file_image, 2: framebuffer, 3: tempbuffer.
+backface = math.min(math.max(math.floor(0.5 + backface), 0), 4);
 if #file_image < 4 then
 	-- no valid file name.
 	if backface == 1 then backface = 0 end
@@ -197,10 +203,10 @@ if unbound and distance > 0 then
 end
 
 -- load the image if specified.
-local cache_name = "cache:pageroll_s/obj";
+local cache_orig = "cache:pageroll_s/obj";
 local img_x, img_x0, img_y, img_y0 = 1, 0, 1, 0;
 if backface > 0 then
-	obj.copybuffer(cache_name, "object");
+	obj.copybuffer(cache_orig, "object");
 
 	-- try loading the specified image.
 	local has_image = true;
@@ -209,12 +215,15 @@ if backface > 0 then
 		has_image = obj.load("image", file_image);
 		obj.ox, obj.oy, obj.oz, obj.cx, obj.cy, obj.cz, obj.rx, obj.ry, obj.rz, obj.sx, obj.sy, obj.sz, obj.alpha = unpack(obj_props);
 	else
-		has_image = obj.copybuffer("object",
-			backface == 2 and "framebuffer" or "tempbuffer");
+		local name =
+			backface == 2 and "framebuffer" or
+			backface == 3 and "tempbuffer" or
+			("cache:"..cache_name);
+		has_image = obj.copybuffer("object", name);
 	end
 	if not has_image then
 		-- no valid image.
-		obj.copybuffer("object", cache_name);
+		obj.copybuffer("object", cache_orig);
 		backface = 0;
 	end
 
@@ -246,7 +255,7 @@ if back_orient >= 2 then img_y, img_y0 = -1, 1 end
 
 -- draw by shader.
 obj.clearbuffer("tempbuffer", L + w + R, T + h + B);
-obj.pixelshader("apply", "tempbuffer", { backface > 0 and cache_name or "object", "object" }, {
+obj.pixelshader("apply", "tempbuffer", { backface > 0 and cache_orig or "object", "object" }, {
 	w, h; L, T;
 	s, -c; tilt_z * c, tilt_z * s;
 	pos_x, pos_y;

@@ -90,10 +90,11 @@ end
 ---@param fov number the angle of the field of view, in radians.
 ---@param shadow number the intensity of the shadow, from 0 to 1.
 ---@param unbound boolean specifies if the size of the image expands as the rolled part goes out of the boundaries.
----@param backface integer specifies which image to show as the backside of the image. 0: current object, 1: specified file, 2: framebuffer, 3: tempbuffer.
+---@param backface integer specifies which image to show as the backside of the image. 0: current object, 1: specified file, 2: framebuffer, 3: tempbuffer, 4: "cache:---".
 ---@param file_image string? the path to the image file to place on the backside of the object. ignored if `backface` is not 1.
+---@param cache_name string? the name of cache; the trailing part of the string "cache:---". ignored if `backface` is not 4.
 ---@param back_orient integer the orientation of the backside. 0: normal, 1: flip horizontally, 2: flip vertically, 3: rotate by 180 degree.
-local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, backface, file_image, back_orient)
+local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, backface, file_image, cache_name, back_orient)
 	local w, h = obj.getpixel();
 
 	distance = math.max(distance, 0);
@@ -101,12 +102,16 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 	X, Y = X + w / 2, Y + h / 2;
 	fov = math.min(math.max(fov, 0), (2 / 3) * math.pi);
 	shadow = math.min(math.max(shadow, 0), 1);
-	backface = math.min(math.max(backface, 0), 3);
+	backface = math.min(math.max(backface, 0), 4);
 	file_image = unescape_shiftjis(file_image);
 	if not file_image or #file_image < 4 then
 		-- no valid file name.
 		if backface == 1 then backface = 0 end
 	else file_image = file_image:match[[^"?(.-)"?$]] end
+	if not cache_name or cache_name == "" then
+		-- no valid cache name.
+		if backface == 4 then backface = 0 end
+	end
 	back_orient = math.min(math.max(back_orient, 0), 3);
 
 	-- early return for trivial cases.
@@ -191,8 +196,8 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 	-- load the image if specified.
 	local img_x, img_x0, img_y, img_y0 = 1, 0, 1, 0;
 	if backface > 0 then
-		local cache_name = backface > 2 and "cache:pageroll_s/obj" or "tmp";
-		obj.copybuffer(cache_name, "obj");
+		local cache_orig = backface ~= 2 and "cache:pageroll_s/bkup" or "tmp";
+		obj.copybuffer(cache_orig, "obj");
 
 		-- try loading the specified image.
 		local has_image = true;
@@ -204,8 +209,10 @@ local function apply_effect(distance, angle, width, X, Y, fov, shadow, unbound, 
 			has_image = W > 0 and H > 0;
 		else
 			has_image = obj.copybuffer("obj",
-				backface == 2 and "frm" or "tmp");
-			if cache_name ~= "tmp" then obj.copybuffer("tmp", cache_name) end
+				backface == 2 and "frm" or
+				backface == 3 and "tmp" or
+				("cache:"..cache_name));
+			if cache_orig ~= "tmp" then obj.copybuffer("tmp", cache_orig) end
 		end
 		if not has_image then
 			-- no valid image.
@@ -304,15 +311,16 @@ end
 ---@param Y number the y-coodinate of the position of the camera, in pixels, origins at the center of the screen.
 ---@param fov number the angle of the field of view, in radians.
 ---@param shadow number the intensity of the shadow, from 0 to 1.
----@param backface integer specifies which image to show as the backside of the image. 0: prevous scene, 1: next scene, 2: file_image, 3: tempbuffer.
+---@param backface integer specifies which image to show as the backside of the image. 0: prevous scene, 1: next scene, 2: file_image, 3: tempbuffer, 4: "cache:---".
 ---@param file_image string? the path to the image file to place on the backside of the object. ignored if `backface` is not 2.
+---@param cache_name string? the name of cache; the trailing part of the string "cache:---". ignored if `backface` is not 4.
 ---@param back_orient integer the orientation of the backside. 0: normal, 1: flip horizontally, 2: flip vertically, 3: rotate by 180 degree.
 ---@param phase number the phase of the scene change, from 0 to 1.
-local function scene_change(angle, width, X, Y, fov, shadow, backface, file_image, back_orient, phase)
+local function scene_change(angle, width, X, Y, fov, shadow, backface, file_image, cache_name, back_orient, phase)
 	width = math.min(math.max(width, 0), 1.5);
 	fov = math.min(math.max(fov, 0), (2 / 3) * math.pi);
 	shadow = math.min(math.max(shadow, 0), 1);
-	backface = math.min(math.max(backface, 0), 3);
+	backface = math.min(math.max(backface, 0), 4);
 	back_orient = math.min(math.max(back_orient, 0), 3);
 	phase = math.min(math.max(phase, 0), 1);
 
@@ -325,6 +333,8 @@ local function scene_change(angle, width, X, Y, fov, shadow, backface, file_imag
 
 	-- shade the background image.
 	if shadow > 0 then
+		local cache_bkup = "cache:pageroll_s/bkup";
+		if backface == 3 then obj.copybuffer(cache_bkup, "tmp") end
 		local grad_w = (3 / 4) * width;
 		obj.copybuffer("tmp", "obj");
 		obj.effect("グラデーション", "角度", 180 / math.pi * angle, "幅", grad_w,
@@ -335,12 +345,13 @@ local function scene_change(angle, width, X, Y, fov, shadow, backface, file_imag
 		obj.draw();
 		obj.setoption("blend", 0);
 		obj.copybuffer("obj", "tmp");
+		if backface == 3 then obj.copybuffer("tmp", cache_bkup) end
 	end
 
 	-- apply rolling deformation.
 	apply_effect(distance, angle, width, X, Y, fov, shadow, false,
 		backface == 0 and 0 or backface == 1 and 2 or backface == 2 and 1 or backface,
-		file_image, back_orient);
+		file_image, cache_name, back_orient);
 
 	-- draw to framebuffer.
 	obj.draw();

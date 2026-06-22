@@ -28,10 +28,14 @@ local shadow = 50
 ---下側 = 1
 ---指定画像 = 2
 ---仮想バッファ = 3
+---一時キャッシュ = 4
 local backface = 0
 
 ---$file:裏地画像
 local file_image = ""
+
+---$string:キャッシュ名
+local cache_name = "my_cache"
 
 ---$select:裏地向き
 ---通常 = 0
@@ -67,6 +71,7 @@ obj.setanchor("X,Y", 0, "line");
 		shadow:			number?,
 		backface:		string?,
 		file_image:		string?,
+		cache_name:		string?,
 		back_orient:	string?,
 		reverse:		boolean|number|nil,
 		phase:			number?,
@@ -86,11 +91,12 @@ shadow = tonumber(PI.shadow) or shadow;
 if PI.backface then
 	local name2num = {
 		[0] = 0, 1, 2; -- legacy compatibility.
-		["上側"] = 0, ["下側"] = 1, ["指定画像"] = 2, ["仮想バッファ"] = 3
+		["上側"] = 0, ["下側"] = 1, ["指定画像"] = 2, ["仮想バッファ"] = 3, ["一時キャッシュ"] = 4
 	};
 	backface = name2num[PI.backface] or backface;
 end
 file_image = type(PI.file_image) == "string" and PI.file_image or file_image;
+cache_name = type(PI.cache_name) == "string" and PI.cache_name or cache_name;
 if type(PI.back_orient) == "string" then back_orient = PI.back_orient;
 else
 	-- legacy compatibility.
@@ -104,7 +110,7 @@ angle = math.pi / 180 * angle;
 width = math.max(width / 100 * (obj.screen_w ^ 2 + obj.screen_h ^ 2) ^ 0.5, 8);
 fov = math.min(math.max(math.pi / 180 * fov, 0), (2 / 3) * math.pi);
 shadow = math.min(math.max(shadow / 100, 0), 1);
-backface = math.min(math.max(math.floor(0.5 + backface), 0), 3);
+backface = math.min(math.max(math.floor(0.5 + backface), 0), 4);
 if #file_image < 4 then
 	-- no valid file name.
 	if backface == 2 then backface = 0 end
@@ -120,18 +126,22 @@ phase = math.min(math.max(phase, 0), 1);
 local c, s = math.cos(angle), math.sin(angle);
 if reverse then
 	phase = 1 - phase;
-	local cache_name = backface == 3 and "cache:pageroll_s/obj" or "tempbuffer";
-	obj.copybuffer(cache_name, "object");
+	local cache_orig = backface == 3 and "cache:pageroll_s/obj" or "tempbuffer";
+	obj.copybuffer(cache_orig, "object");
 	obj.copybuffer("object", "framebuffer");
-	obj.copybuffer("framebuffer", cache_name);
+	obj.copybuffer("framebuffer", cache_orig);
 end
 local distance = phase * (width / 2 + math.abs(s) * obj.screen_w + math.abs(c) * obj.screen_h);
 
 -- apply rolling deformation.
 obj.effect("PageRoll_S", "PI",
-	("distance=%s,angle=%s,width=%s,X=%s,Y=%s,fov=%s,shadow=%s,unbound=false,backface=%q,back_orient=%q,file_image=%q"):format(
+	("distance=%s,angle=%s,width=%s,X=%s,Y=%s,fov=%s,shadow=%s,unbound=false,backface=%q,cache_name=%q,back_orient=%q,file_image=%q"):format(
 		distance, 180 / math.pi * angle, width, X, Y, 180 / math.pi * fov, 100 * shadow,
-		backface == 0 and "元画像" or backface == 1 and "フレームバッファ" or backface == 2 and "元画像/画像ファイル" or "仮想バッファ",
+		backface == 0 and "元画像" or
+		backface == 1 and "フレームバッファ" or
+		backface == 2 and "元画像/画像ファイル" or
+		backface == 3 and "仮想バッファ" or
+		"一時キャッシュ", cache_name,
 		back_orient, file_image));
 
 -- shade and combine.
