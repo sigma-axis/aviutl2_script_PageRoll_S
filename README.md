@@ -103,12 +103,6 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 ### 共通の設定項目
 
-![AviUtl1のアニメーション効果版のGUIその1](https://github.com/user-attachments/assets/df7e0552-840d-4264-a5a7-b05224404369)
-
-![AviUtl1のアニメーション効果版のGUIその2](https://github.com/user-attachments/assets/fa94d167-1027-47d1-9e34-18939c6951e6)
-
-![AviUtl2のフィルタ効果版のGUI](https://github.com/user-attachments/assets/793fd9ec-874b-4026-a733-f803714cf69e)
-
 ####  角度
 
 ページをめくる方向を指定します．0 で真下から，時計回りに正です．
@@ -225,12 +219,6 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 
 ### フィルタ効果 (アニメーション効果) の設定項目
 
-![AviUtl1のアニメーション効果版のGUIその1](https://github.com/user-attachments/assets/df7e0552-840d-4264-a5a7-b05224404369)
-
-![AviUtl1のアニメーション効果版のGUIその2](https://github.com/user-attachments/assets/fa94d167-1027-47d1-9e34-18939c6951e6)
-
-![AviUtl2のフィルタ効果版のGUI](https://github.com/user-attachments/assets/793fd9ec-874b-4026-a733-f803714cf69e)
-
 ####  距離
 
 「丸めて転がした」距離を指定します．
@@ -281,12 +269,6 @@ AviUtl (無印) 版では AviUtl ExEdit2 版と比べてパラメタの並びが
 初期値は `元画像/画像ファイル`.
 
 ### シーンチェンジの設定項目
-
-![AviUtl1のシーンチェンジのGUIその1](https://github.com/user-attachments/assets/0a13684b-10b0-45aa-bd25-62987813ba9b)
-
-![AviUtl1のシーンチェンジのGUIその2](https://github.com/user-attachments/assets/4ead1abe-148f-44e2-99bf-4f0b99d9785a)
-
-![AviUtl2のシーンチェンジのGUI](https://github.com/user-attachments/assets/0896843e-591d-4dc6-a761-8ef92b917abc)
 
 ####  裏地
 
