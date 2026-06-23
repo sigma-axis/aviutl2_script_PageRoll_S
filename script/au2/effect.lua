@@ -62,6 +62,8 @@ local obj, math, tonumber, type, unpack = obj, math, tonumber, type, unpack;
 -- set anchors.
 obj.setanchor("X,Y", 0, "line");
 
+--#region PI / normalize parameters.
+
 -- take parameters.
 --[==[
 	PI = {
@@ -122,6 +124,8 @@ if #file_image < 4 then
 	if backface == 1 then backface = 0 end
 end
 back_orient = math.min(math.max(math.floor(0.5 + back_orient), 0), 3);
+
+--#endregion PI / normalize parameters.
 
 -- early return for trivial cases.
 if distance == 0 then return end
@@ -203,7 +207,7 @@ if unbound and distance > 0 then
 end
 
 -- load the image if specified.
-local cache_orig = "cache:pageroll_s/obj";
+local cache_orig, cache_canvas = "cache:pageroll_s/obj", "cache:pageroll_s/cvs";
 local img_x, img_x0, img_y, img_y0 = 1, 0, 1, 0;
 if backface > 0 then
 	obj.copybuffer(cache_orig, "object");
@@ -254,15 +258,15 @@ if back_orient % 2 == 1 then img_x, img_x0 = -1, 1 end
 if back_orient >= 2 then img_y, img_y0 = -1, 1 end
 
 -- draw by shader.
-obj.clearbuffer("tempbuffer", L + w + R, T + h + B);
-obj.pixelshader("apply", "tempbuffer", { backface > 0 and cache_orig or "object", "object" }, {
+obj.clearbuffer(cache_canvas, L + w + R, T + h + B);
+obj.pixelshader("apply", cache_canvas, { backface > 0 and cache_orig or "object", "object" }, {
 	w, h; L, T;
 	s, -c; tilt_z * c, tilt_z * s;
 	pos_x, pos_y;
 	img_x / w, img_y / h; img_x0, img_y0;
 	radius, width / 2, (width / D) * fov_rate * rad_rate, shadow,
 }, "copy", "clip");
-obj.copybuffer("object", "tempbuffer");
+obj.copybuffer("object", cache_canvas);
 
 -- adjust the center.
 obj.cx, obj.cy = obj.cx + (L - R) / 2, obj.cy + (T - B) / 2;

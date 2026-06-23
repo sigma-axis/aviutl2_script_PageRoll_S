@@ -60,6 +60,8 @@ local obj, math, tonumber, type = obj, math, tonumber, type;
 -- set anchors.
 obj.setanchor("X,Y", 0, "line");
 
+--#region PI / normalize parameters.
+
 -- take parameters.
 --[==[
 	PI = {
@@ -122,15 +124,17 @@ if type(back_orient) ~= "string" then
 end
 phase = math.min(math.max(phase, 0), 1);
 
+--#endregion PI / normalize parameters.
+
 -- further calculations.
-local c, s = math.cos(angle), math.sin(angle);
 if reverse then
 	phase = 1 - phase;
-	local cache_orig = backface == 3 and "cache:pageroll_s/obj" or "tempbuffer";
+	local cache_orig = "cache:pageroll_s/obj";
 	obj.copybuffer(cache_orig, "object");
 	obj.copybuffer("object", "framebuffer");
 	obj.copybuffer("framebuffer", cache_orig);
 end
+local c, s = math.cos(angle), math.sin(angle);
 local distance = phase * (width / 2 + math.abs(s) * obj.screen_w + math.abs(c) * obj.screen_h);
 
 -- apply rolling deformation.
