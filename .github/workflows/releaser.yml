@@ -50,6 +50,7 @@ jobs:
   release:
     name: Create Release
     if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -72,10 +73,10 @@ jobs:
       - name: Pack and compress (AviUtl 1)
         run: |
           mkdir -p pack_au1
-          cp *.anm pack_au1
-          cp *.scn pack_au1
-          cp *.lua pack_au1
-          cp *.frag pack_au1
+          cp script/au1/*.anm pack_au1
+          cp script/au1/*.scn pack_au1
+          cp script/au1/*.lua pack_au1
+          cp script/au1/*.frag pack_au1
           cp *.md pack_au1
           cp LICENSE pack_au1
           cd pack_au1
