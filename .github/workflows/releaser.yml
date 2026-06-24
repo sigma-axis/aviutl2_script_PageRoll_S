@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   build:
-    name: Build
+    name: Build with aulua
     if: github.event_name == 'push' && github.ref_type == 'tag'
     runs-on: windows-latest
     defaults:
