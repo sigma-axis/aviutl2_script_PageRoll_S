@@ -66,7 +66,7 @@ jobs:
           ver="${tag%%-*}"
           for f in PageRoll_S.anm PageRoll_S.scn PageRoll_S.lua PageRoll_S.frag; do
             [ -f "$f" ] || continue
-            sed -i 's/\$\{ver\}/'"$ver"'/g' "$f"
+            sed -i 's/\${ver}/'"$ver"'/g' "$f"
           done
 
       - name: Pack and compress (AviUtl 1)
