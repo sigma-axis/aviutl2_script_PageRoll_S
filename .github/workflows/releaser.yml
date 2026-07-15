@@ -63,11 +63,9 @@ jobs:
       - name: Set package version (AviUtl 1)
         run: |
           cd script/au1
-          tag="${{ github.ref_name }}"
-          ver="${tag%%-*}"
           for f in PageRoll_S.anm PageRoll_S.scn PageRoll_S.lua PageRoll_S.frag; do
             [ -f "$f" ] || continue
-            sed -i 's/\${ver}/'"$ver"'/g' "$f"
+            sed -i 's/\${ver}/${{ github.ref_name }}/g' "$f"
           done
 
       - name: Pack and compress (AviUtl 1)
