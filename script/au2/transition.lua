@@ -2,7 +2,7 @@
 ---$script_tips:ページを丸めるように画像を変形してシーンチェンジします．
 --label:シーンチェンジ
 --require:${LEAST_AVIUTL_VERSION}
----$tips:巻き取る角度を指定．0 で真上から，時計回りに正．
+---$tips:巻き取る角度を指定．0 で真上方向に，時計回りに正．
 ---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
 local angle = -90
 

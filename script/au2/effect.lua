@@ -6,7 +6,7 @@
 ---$track:距離, min = 0, max = 4000, step = 0.01, scale = 0.5
 local distance = 0
 
----$tips:巻き取る角度を指定．0 で真上から，時計回りに正．
+---$tips:巻き取る角度を指定．0 で真上方向に，時計回りに正．
 ---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
 local angle = -90
 
@@ -28,6 +28,7 @@ local fov = 70
 ---$track:陰影, min = 0, max = 100, step = 0.01
 local shadow = 50
 
+---$tips:画像の元々のサイズ領域から巻き取った部分がはみ出した場合，領域を拡張します．
 ---$checksection:領域外も描画
 local unbound = true
 
@@ -39,6 +40,7 @@ local unbound = true
 ---一時キャッシュ = 4
 local backface = 1
 
+---$tips:未指定の場合は元画像．
 ---$file:裏地画像
 local file_image = ""
 
