@@ -10,7 +10,7 @@ project:
 package:
   id: PageRoll_S
   name: ページ丸めスクリプト PageRoll_S
-  version: v1.21
+  version: v1.22
   information: "{name} {version} by {AUTHOR}"
   script_sub_dir: ""
   uninstall_sub_folder_file: false

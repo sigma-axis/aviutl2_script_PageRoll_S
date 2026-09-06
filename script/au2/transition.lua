@@ -37,6 +37,7 @@ local backface = 0
 local file_image = ""
 
 --hide@file_image:backface~=2
+---$tips:"cache:---" の "---" 部分．「裏地」で「一時キャッシュ」指定時のみ有効．
 ---$string:キャッシュ名
 local cache_name = "my_cache"
 
