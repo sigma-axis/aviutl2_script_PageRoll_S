@@ -27,6 +27,8 @@ https://mit-license.org/
 -- VERSION: ${ver}
 --
 
+-- https://github.com/sigma-axis/aviutl2_script_PageRoll_S
+
 --track0:角度,-720,720,-90,0.01
 --track1:太さ,2,150,20,0.01
 --dialog:視点,_1={0,0};視野角,_2=70;陰影,_3=50;裏地(0~4),_4=0;裏地画像,_5=[[]];キャッシュ名,_7="my_cache";裏地向き(0~3),_6=0;PI,_0=nil;

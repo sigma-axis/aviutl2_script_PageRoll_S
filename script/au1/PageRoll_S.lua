@@ -27,6 +27,8 @@ https://mit-license.org/
 -- VERSION: ${ver}
 --
 
+-- https://github.com/sigma-axis/aviutl2_script_PageRoll_S
+
 --------------------------------
 
 local GLShaderKit = require "GLShaderKit";

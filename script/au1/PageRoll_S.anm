@@ -27,6 +27,8 @@ https://mit-license.org/
 -- VERSION: ${ver}
 --
 
+-- https://github.com/sigma-axis/aviutl2_script_PageRoll_S
+
 --track0:距離,0,4000,0,0.01
 --track1:角度,-720,720,-90,0.01
 --track2:太さ,8,4000,80,0.01
