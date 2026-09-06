@@ -1,6 +1,8 @@
 --information:PageRoll_S(シーンチェンジ) ${PACKAGE_VERSION} by ${AUTHOR}
+---$script_tips:ページを丸めるように画像を変形してシーンチェンジします．
 --label:シーンチェンジ
 --require:${LEAST_AVIUTL_VERSION}
+---$tips:巻き取る角度を指定．0 で真上から，時計回りに正．
 ---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
 local angle = -90
 
@@ -51,6 +53,20 @@ local back_orient = 0
 local reverse = false
 
 --group:その他,false
+---$tips:PI = {
+---     :  angle: number?,
+---     :  width: number?,
+---     :  X: number?,
+---     :  Y: number?,
+---     :  fov: number?,
+---     :  shadow: number?,
+---     :  backface: string?,
+---     :  file_image: string?,
+---     :  cache_name: string?,
+---     :  back_orient: string?,
+---     :  reverse: boolean|number|nil,
+---     :  phase: number?,
+---     :}
 ---$value:PI
 local PI = {}
 
@@ -65,22 +81,6 @@ obj.setanchor("X,Y", 0, "line");
 --#region PI / normalize parameters.
 
 -- take parameters.
---[==[
-	PI = {
-		angle:			number?,
-		width:			number?,
-		X:				number?,
-		Y:				number?,
-		fov:			number?,
-		shadow:			number?,
-		backface:		string?,
-		file_image:		string?,
-		cache_name:		string?,
-		back_orient:	string?,
-		reverse:		boolean|number|nil,
-		phase:			number?,
-	}
-]==]
 local function as_bool(t, v)
 	if type(t) == "boolean" then return t;
 	elseif type(t) == "number" then return t ~= 0;

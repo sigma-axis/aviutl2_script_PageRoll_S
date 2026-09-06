@@ -1,10 +1,12 @@
 --information:PageRoll_S ${PACKAGE_VERSION} by ${AUTHOR}
+---$script_tips:ページを丸めるように画像を変形します．
 --label:変形
 --filter
 --require:${LEAST_AVIUTL_VERSION}
 ---$track:距離, min = 0, max = 4000, step = 0.01, scale = 0.5
 local distance = 0
 
+---$tips:巻き取る角度を指定．0 で真上から，時計回りに正．
 ---$track:角度, min = -3600, max = 3600, step = 0.01, scale = 0.1
 local angle = -90
 
@@ -41,6 +43,7 @@ local backface = 1
 local file_image = ""
 
 --hide@file_image:backface~=1
+---$tips:"cache:---" の "---" 部分．「裏地種類」で「一時キャッシュ」指定時のみ有効．
 ---$string:キャッシュ名
 local cache_name = "my_cache"
 
@@ -53,6 +56,20 @@ local cache_name = "my_cache"
 local back_orient = 0
 
 --group:その他,false
+---$tips:PI = {
+---     :  distance: number?,
+---     :  angle: number?,
+---     :  width: number?,
+---     :  X: number?,
+---     :  Y: number?,
+---     :  fov: number?,
+---     :  shadow: number?,
+---     :  unbound: boolean|number|nil,
+---     :  backface: number?,
+---     :  file_image: string?,
+---     :  cache_name: string?,
+---     :  back_orient: number?,
+---     :}
 ---$value:PI
 local PI = {}
 
@@ -62,27 +79,11 @@ local PI = {}
 local obj, math, tonumber, type, unpack = obj, math, tonumber, type, unpack;
 
 -- set anchors.
-obj.setanchor("X,Y", 0, "line");
+if obj.getoption("gui") then obj.setanchor("X,Y", 0, "line") end
 
 --#region PI / normalize parameters.
 
 -- take parameters.
---[==[
-	PI = {
-		distance:		number?,
-		angle:			number?,
-		width:			number?,
-		X:				number?,
-		Y:				number?,
-		fov:			number?,
-		shadow:			number?,
-		unbound:		boolean|number|nil,
-		backface:		number?,
-		file_image:		string?,
-		cache_name:		string?,
-		back_orient:	number?,
-	}
-]==]
 local function as_bool(t, v)
 	if type(t) == "boolean" then return t;
 	elseif type(t) == "number" then return t ~= 0;

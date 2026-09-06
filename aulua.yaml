@@ -50,3 +50,9 @@ scripts:
     sources:
       - path: script/au2/preamble.lua
       - path: script/au2/transition.lua
+
+language:
+  files:
+    - path: build/Default.PageRoll_S.aul2
+      text: false
+      tooltip: true
