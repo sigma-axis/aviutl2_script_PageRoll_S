@@ -50,7 +50,7 @@ https://github.com/user-attachments/assets/b83fc0ba-7e1a-4ee5-b033-b4d8879243a4
 
   http://spring-fragrance.mints.ne.jp/aviutl
 
-  - `beta51` で動作確認済み．
+  - `2.1.8` で動作確認済み．
 
 ## 導入方法
 
@@ -440,7 +440,13 @@ AviUtl ExEdit2 版にのみあります．AviUtl (無印) のシーンチェン�
     - ロール(縦) :arrow_right: 約 12.26% (270 ピクセル).
 
 
-## 改版履歴
+##  次の改版予定
+
+- **v1.21** (2026-??-??)
+
+  - AviUtl2 版で，一部設定項目を条件によって非表示にするように．
+
+##  改版履歴
 
 - **v1.20 (for beta51)** (2026-06-24)
 

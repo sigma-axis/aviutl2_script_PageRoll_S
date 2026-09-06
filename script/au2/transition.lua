@@ -34,9 +34,11 @@ local backface = 0
 ---$file:裏地画像
 local file_image = ""
 
+--hide@file_image:backface~=2
 ---$string:キャッシュ名
 local cache_name = "my_cache"
 
+--hide@cache_name:backface~=4
 ---$select:裏地向き
 ---通常 = 0
 ---左右反転 = 1
