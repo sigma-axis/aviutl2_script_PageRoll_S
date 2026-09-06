@@ -53,6 +53,7 @@ local back_orient = 0
 local reverse = false
 
 --group:その他,false
+---$nolang: name
 ---$tips:PI = {
 ---     :  angle: number?,
 ---     :  width: number?,

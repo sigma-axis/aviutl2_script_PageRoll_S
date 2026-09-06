@@ -1,4 +1,5 @@
 --information:PageRoll_S ${PACKAGE_VERSION} by ${AUTHOR}
+---$nolang: script_name
 ---$script_tips:ページを丸めるように画像を変形します．
 --label:変形
 --filter
@@ -58,6 +59,7 @@ local cache_name = "my_cache"
 local back_orient = 0
 
 --group:その他,false
+---$nolang: name
 ---$tips:PI = {
 ---     :  distance: number?,
 ---     :  angle: number?,
